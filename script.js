@@ -10,7 +10,7 @@ let products = {
             brand: "Pafos",
             description: "Вкус табака, крепость 20 мг/мл.",
             price: 1000,
-            image: "https://via.placeholder.com/250",
+            image: "https://avatars.mds.yandex.net/get-goods_pic/14530939/hat266cb43543d096949631be4053c09250/square_166",
             stock: 10
         }
     ],
@@ -21,7 +21,7 @@ let products = {
             brand: "HQD",
             description: "Мощная и долговечная.",
             price: 3000,
-            image: "https://via.placeholder.com/250",
+            image: "https://avatars.mds.yandex.net/get-goods_pic/14530939/hat266cb43543d096949631be4053c09250/square_166",
             stock: 5
         }
     ],
@@ -32,7 +32,16 @@ let products = {
             brand: "Pafos",
             description: "Сменный картридж для электронных сигарет.",
             price: 800,
-            image: "https://via.placeholder.com/250",
+            image: "https://avatars.mds.yandex.net/get-goods_pic/14530939/hat266cb43543d096949631be4053c09250/square_166",
+            stock: 20
+        },
+        {
+            id: 4,
+            name: "Картридж Pafos",
+            brand: "Pafos",
+            description: "Сменный картридж для электронных сигарет.",
+            price: 800,
+            image: "https://avatars.mds.yandex.net/get-goods_pic/14530939/hat266cb43543d096949631be4053c09250/square_166",
             stock: 20
         }
     ]
@@ -428,7 +437,7 @@ function renderCartButton() {
     });
 }
 
-                                                                                                                                                            // Оформление самовывоза
+// Оформление самовывоза
 document.getElementById("pickup-form").addEventListener("submit", (e) => {
     e.preventDefault(); // Отменяем стандартное поведение формы
     const name = document.getElementById("pickup-name").value; // Имя пользователя
