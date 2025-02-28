@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин электронных сигарет</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Модальное окно для подтверждения возраста -->
+    <div id="age-verification-modal" class="modal">
+        <div class="modal-content">
+            <h2>Вам есть 18 лет?</h2>
+            <button id="age-yes">Да</button>
+            <button id="age-no">Нет</button>
+        </div>
+    </div>
+
+    <!-- Кнопка для входа в админ-панель -->
+    <button id="admin-login">Войти как администратор</button>
+
+    <!-- Админ-панель (скрыта по умолчанию) -->
+    <div id="admin-panel" class="admin-panel hidden">
+        <h2>Админ-панель</h2>
+        <form id="product-form">
+            <input type="text" id="product-name" placeholder="Название товара" required>
+            <input type="text" id="product-brand" placeholder="Бренд" required>
+            <input type="text" id="product-description" placeholder="Описание" required>
+            <input type="number" id="product-price" placeholder="Цена" required>
+            <input type="text" id="product-image" placeholder="Ссылка на изображение" required>
+            <input type="number" id="product-stock" placeholder="Количество на складе" required>
+            <select id="product-category">
+                <option value="liquids">Жидкости</option>
+                <option value="ecigs">Электронные сигареты</option>
+                <option value="cartridges">Картриджи</option>
+            </select>
+            <button type="submit">Добавить/Изменить товар</button>
+        </form>
+        <div id="product-list"></div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="container">
+        <h1>Наши товары</h1>
+        <div id="categories" class="categories"></div>
+        <div id="sub-categories" class="sub-categories"></div>
+        <div id="sort-buttons" class="sort-buttons"></div>
+        <div id="products" class="products"></div>
+    </div>
+
+    <!-- Корзина -->
+    <button id="cart-button" class="hidden">Корзина (0)</button>
+
+    <!-- Модальное окно корзины -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <h2>Корзина</h2>
+            <div id="cart-items"></div>
+            <p id="cart-total"></p>
+            <form id="pickup-form">
+                <input type="text" id="pickup-name" placeholder="Ваше имя" required>
+                <input type="tel" id="pickup-phone" placeholder="Ваш телефон" required>
+                <button type="submit">Оформить самовывоз</button>
+            </form>
+            <button id="close-cart">Закрыть</button> <!-- Кнопка закрытия корзины -->
+        </div>
+    </div>
+
+    <!-- Подключение JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

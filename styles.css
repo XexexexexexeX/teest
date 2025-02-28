@@ -1,0 +1,253 @@
+/* Тёмная тема */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #ffffff;
+}
+
+.categories, .sub-categories, .sort-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+}
+
+    button:hover {
+        background-color: #555;
+    }
+
+.products {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.product-card {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 250px;
+    padding: 20px;
+    text-align: center;
+}
+
+    .product-card img {
+        max-width: 100%;
+        border-radius: 8px;
+    }
+
+    .product-card h2 {
+        font-size: 1.5em;
+        margin: 10px 0;
+        color: #ffffff;
+    }
+
+    .product-card p {
+        color: #ccc;
+    }
+
+    .product-card .price {
+        font-size: 1.2em;
+        color: #ffffff;
+        font-weight: bold;
+    }
+
+    .product-card button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+        .product-card button:hover {
+            background-color: #0056b3;
+        }
+
+.hidden {
+    display: none;
+}
+
+.admin-panel {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+#product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+    #product-form input, #product-form select {
+        padding: 10px;
+        border: 1px solid #333;
+        border-radius: 5px;
+        background-color: #333;
+        color: #ffffff;
+    }
+
+    #product-form button {
+        padding: 10px;
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        #product-form button:hover {
+            background-color: #218838;
+        }
+
+.product-item {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+.modal {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* Стили для крестика удаления товара */
+.remove-item {
+    cursor: pointer;
+    color: #999;
+    font-size: 20px;
+    margin-left: 10px;
+}
+
+.remove-item:hover {
+    color: #ff0000; /* Красный цвет при наведении */
+}
+
+    .modal-content h2 {
+        color: #ffffff;
+    }
+
+    .modal-content button {
+        margin: 10px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #333;
+        color: #fff;
+        cursor: pointer;
+    }
+
+        .modal-content button:hover {
+            background-color: #555;
+        }
+
+#cart-modal .modal-content {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+#cart-items {
+    margin-bottom: 20px;
+}
+
+    #cart-items div {
+        margin-bottom: 10px;
+        color: #ffffff;
+    }
+
+#cart-total {
+    font-size: 1.2em;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+#pickup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+    #pickup-form input {
+        padding: 10px;
+        border: 1px solid #333;
+        border-radius: 5px;
+        background-color: #333;
+        color: #ffffff;
+    }
+
+    #pickup-form button {
+        padding: 10px;
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        #pickup-form button:hover {
+            background-color: #218838;
+        }
+
+#close-cart {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+    #close-cart:hover {
+        background-color: #c82333;
+    }
