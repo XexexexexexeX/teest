@@ -153,7 +153,7 @@ function deleteProduct(category, id) {
 // Сохранение данных
 async function saveProducts() {
     try {
-        const response = await fetch('http://localhost:62000/api/products', {
+        const response = await fetch('https://qew-xnec.onrender.com/api/products', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -174,7 +174,7 @@ async function saveProducts() {
 // Загрузка данных
 async function loadProducts() {
     try {
-        const response = await fetch('http://localhost:62000/api/products');
+        const response = await fetch('https://qew-xnec.onrender.com/api/products');
         if (response.ok) {
             products = await response.json(); // Обновляем глобальный объект products
             renderProductList(); // Рендерим список товаров
