@@ -156,12 +156,79 @@ function saveProducts() {
 }
 
 // Загрузка данных
-function loadProducts() {
-    const savedProducts = localStorage.getItem("products"); // Получаем данные из localStorage
-    if (savedProducts) {
-        products = JSON.parse(savedProducts); // Парсим данные
+async function loadProducts() {
+    try {
+        const response = await fetch('/api/products');
+        if (response.ok) {
+            const products = await response.json();
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = ''; // Очищаем список
+
+            // Отображаем товары
+            Object.keys(products).forEach(category => {
+                const categoryTitle = document.createElement('h3');
+                categoryTitle.textContent = category.toUpperCase();
+                productList.appendChild(categoryTitle);
+
+                products[category].forEach(product => {
+                    const productItem = document.createElement('div');
+                    productItem.innerHTML = `
+                        <p><strong>${product.name}</strong> (${product.brand})</p>
+                        <p>${product.description}</p>
+                        <p>Цена: ${product.price} руб.</p>
+                        <p>На складе: ${product.stock} шт.</p>
+                        <img src="${product.image}" alt="${product.name}" width="100">
+                        <hr>
+                    `;
+                    productList.appendChild(productItem);
+                });
+            });
+        } else {
+            console.error('Ошибка при загрузке товаров');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
     }
 }
+
+
+document.getElementById('product-form').addEventListener('submit', async function (event) {
+    event.preventDefault(); // Предотвращаем стандартную отправку формы
+
+    // Собираем данные из формы
+    const productData = {
+        name: document.getElementById('product-name').value,
+        brand: document.getElementById('product-brand').value,
+        description: document.getElementById('product-description').value,
+        price: parseFloat(document.getElementById('product-price').value),
+        image: document.getElementById('product-image').value,
+        stock: parseInt(document.getElementById('product-stock').value),
+        category: document.getElementById('product-category').value
+    };
+
+    try {
+        // Отправляем данные на сервер
+        const response = await fetch('/api/products', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(productData)
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            alert(data.message); // Уведомление об успехе
+            loadProducts(); // Обновляем список товаров (если у вас есть такая функция)
+        } else {
+            alert('Ошибка при добавлении/изменении товара');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при отправке данных');
+    }
+});
+
 
 // Сохранение корзины
 function saveCart() {
