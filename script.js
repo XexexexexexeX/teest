@@ -151,38 +151,34 @@ function deleteProduct(category, id) {
 }
 
 // Сохранение данных
-function saveProducts() {
-    localStorage.setItem("products", JSON.stringify(products)); // Сохраняем данные в localStorage
+async function saveProducts() {
+    try {
+        const response = await fetch('http://localhost:62000/api/products', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(products) // Отправляем все товары
+        });
+
+        if (response.ok) {
+            console.log('Товары успешно сохранены на сервере');
+        } else {
+            console.error('Ошибка при сохранении товаров');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
 }
 
 // Загрузка данных
 async function loadProducts() {
     try {
-        const response = await fetch('/api/products');
+        const response = await fetch('http://localhost:62000/api/products');
         if (response.ok) {
-            const products = await response.json();
-            const productList = document.getElementById('product-list');
-            productList.innerHTML = ''; // Очищаем список
-
-            // Отображаем товары
-            Object.keys(products).forEach(category => {
-                const categoryTitle = document.createElement('h3');
-                categoryTitle.textContent = category.toUpperCase();
-                productList.appendChild(categoryTitle);
-
-                products[category].forEach(product => {
-                    const productItem = document.createElement('div');
-                    productItem.innerHTML = `
-                        <p><strong>${product.name}</strong> (${product.brand})</p>
-                        <p>${product.description}</p>
-                        <p>Цена: ${product.price} руб.</p>
-                        <p>На складе: ${product.stock} шт.</p>
-                        <img src="${product.image}" alt="${product.name}" width="100">
-                        <hr>
-                    `;
-                    productList.appendChild(productItem);
-                });
-            });
+            products = await response.json(); // Обновляем глобальный объект products
+            renderProductList(); // Рендерим список товаров
+            console.log('Товары загружены с сервера');
         } else {
             console.error('Ошибка при загрузке товаров');
         }
@@ -190,6 +186,7 @@ async function loadProducts() {
         console.error('Ошибка:', error);
     }
 }
+
 
 
 document.getElementById('product-form').addEventListener('submit', async function (event) {
