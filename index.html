@@ -17,7 +17,7 @@
     </div>
 
     <!-- Кнопка для входа в админ-панель -->
-    <button id="admin-login">Войти как администратор</button>
+    <admin-login id="admin-login"></admin-login>
 
     <!-- Админ-панель (скрыта по умолчанию) -->
     <div id="admin-panel" class="admin-panel hidden">
@@ -34,9 +34,12 @@
                 <option value="ecigs">Электронные сигареты</option>
                 <option value="cartridges">Картриджи</option>
             </select>
-            <button type="submit">Добавить/Изменить товар</button>
+            <button id="add/edd">Добавить/Изменить товар</button>
         </form>
         <div id="product-list"></div>
+        <div id="toggle-product-list" class="hidden">
+            <span></span> <!-- Иконка или текст -->
+        </div>
     </div>
 
     <!-- Основной контент -->
@@ -63,6 +66,7 @@
                 <button type="submit">Оформить самовывоз</button>
             </form>
             <button id="close-cart">Закрыть</button> <!-- Кнопка закрытия корзины -->
+            <p>*Не забудьте взять паспорт для подтверждения возраста.</p>
         </div>
     </div>
 
