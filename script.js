@@ -1,50 +1,10 @@
-let isAdmin = false; // Флаг для проверки, вошёл ли администратор
+let isAdmin = true; // Флаг для проверки, вошёл ли администратор
 let cart = []; // Массив для хранения товаров в корзине
 
-// Данные о товарах
 let products = {
-    liquids: [
-        {
-            id: 1,
-            name: "Жидкость Pafos 20000",
-            brand: "Pafos",
-            description: "Вкус табака, крепость 20 мг/мл.",
-            price: 1000,
-            image: "https://avatars.mds.yandex.net/get-goods_pic/14530939/hat266cb43543d096949631be4053c09250/square_166",
-            stock: 10
-        }
-    ],
-    ecigs: [
-        {
-            id: 2,
-            name: "Электронная сигарета HQD",
-            brand: "HQD",
-            description: "Мощная и долговечная.",
-            price: 3000,
-            image: "https://avatars.mds.yandex.net/get-goods_pic/14530939/hat266cb43543d096949631be4053c09250/square_166",
-            stock: 5
-        }
-    ],
-    cartridges: [
-        {
-            id: 3,
-            name: "Картридж Pafos",
-            brand: "Pafos",
-            description: "Сменный картридж для электронных сигарет.",
-            price: 800,
-            image: "https://avatars.mds.yandex.net/get-goods_pic/14530939/hat266cb43543d096949631be4053c09250/square_166",
-            stock: 20
-        },
-        {
-            id: 4,
-            name: "Картридж Pafos",
-            brand: "Pafos",
-            description: "Сменный картридж для электронных сигарет.",
-            price: 800,
-            image: "https://avatars.mds.yandex.net/get-goods_pic/14530939/hat266cb43543d096949631be4053c09250/square_166",
-            stock: 20
-        }
-    ]
+    liquids: [],
+    ecigs: [],
+    cartridges: []
 };
 
 // Предупреждение о возрасте
@@ -68,14 +28,32 @@ document.getElementById("admin-login").addEventListener("click", () => {
     if (password === "admin123") { // Простой пароль для примера
         isAdmin = true;
         document.getElementById("admin-panel").classList.remove("hidden"); // Показываем админ-панель
+        document.getElementById("toggle-product-list").classList.remove("hidden");
         renderProductList(); // Рендерим список товаров
     } else {
         alert("Неверный пароль!");
     }
 });
 
+// Функция для сворачивания/разворачивания списка товаров
+function toggleProductList() {
+    const productList = document.getElementById("product-list");
+    const toggleButton = document.getElementById("toggle-product-list");
+
+    if (productList.classList.contains("hidden")) {
+        // Если список скрыт, показываем его
+        productList.classList.remove("hidden");
+    } else {
+        // Если список видим, скрываем его
+        productList.classList.add("hidden");
+    }
+}
+
+// Добавьте обработчик события для кнопки
+document.getElementById("toggle-product-list").addEventListener("click", toggleProductList);
+
 // Обработка формы
-document.getElementById("product-form").addEventListener("submit", (e) => {
+document.getElementById("product-form").addEventListener("add/edd", (e) => {
     e.preventDefault(); // Отменяем стандартное поведение формы
 
     const id = Date.now(); // Уникальный ID
@@ -90,7 +68,7 @@ document.getElementById("product-form").addEventListener("submit", (e) => {
     const product = { id, name, brand, description, price, image, stock }; // Создаём объект товара
 
     // Добавление или обновление товара
-    const existingProductIndex = products[category].findIndex(p => p.name === name);
+    const existingProductIndex = products[category].findIndex(p => p.id === id);
     if (existingProductIndex !== -1) {
         products[category][existingProductIndex] = product; // Обновляем товар
     } else {
@@ -108,23 +86,51 @@ function renderProductList() {
     const productList = document.getElementById("product-list");
     productList.innerHTML = ""; // Очищаем список
 
-    Object.keys(products).forEach(category => { // Перебираем категории
-        products[category].forEach(product => { // Перебираем товары в категории
+    // Перебираем категории
+    Object.keys(products).forEach(category => {
+        // Создаем контейнер для категории
+        const categoryContainer = document.createElement("div");
+        categoryContainer.classList.add("category-container");
+
+        // Добавляем заголовок категории
+        const categoryTitle = document.createElement("h2");
+        categoryTitle.textContent = category === "liquids" ? "Жидкости" :
+            category === "ecigs" ? "Электронные сигареты" :
+                "Картриджи"; // Название категории
+        categoryContainer.appendChild(categoryTitle);
+
+        // Перебираем товары в категории
+        products[category].forEach(product => {
             const productItem = document.createElement("div");
             productItem.classList.add("product-item");
 
-            productItem.innerHTML = `
-        <h3>${product.name}</h3>
-        <p>Бренд: ${product.brand}</p>
-        <p>Описание: ${product.description}</p>
-        <p>Цена: ${product.price} руб.</p>
-        <p>Наличие: ${product.stock} шт.</p>
-        <button onclick="editProduct('${category}', ${product.id})">Изменить</button>
-        <button onclick="deleteProduct('${category}', ${product.id})">Удалить</button>
-      `;
+            // Добавляем картинку товара
+            const productImage = document.createElement("img");
+            productImage.src = product.image; // URL картинки
+            productImage.alt = product.name; // Альтернативный текст
+            productImage.classList.add("product-image");
 
-            productList.appendChild(productItem); // Добавляем товар в список
+            // Содержимое товара (текст и кнопки)
+            const productContent = document.createElement("div");
+            productContent.classList.add("product-content");
+
+            productContent.innerHTML = `
+                <h3>${product.name}</h3>
+                <p>Бренд: ${product.brand}</p>
+                <p>Описание: ${product.description}</p>
+                <p>Цена: ${product.price} руб.</p>
+                <p>Наличие: ${product.stock} шт.</p>
+                <button onclick="editProduct('${category}', ${product.id})">Изменить</button>
+                <button onclick="deleteProduct('${category}', ${product.id})">Удалить</button>
+            `;
+
+            // Добавляем содержимое и картинку в карточку
+            productItem.appendChild(productContent);
+            productItem.appendChild(productImage); // Картинка справа
+            categoryContainer.appendChild(productItem); // Добавляем товар в категорию
         });
+
+        productList.appendChild(categoryContainer); // Добавляем категорию в список
     });
 }
 
@@ -142,6 +148,7 @@ function editProduct(category, id) {
     }
 }
 
+
 // Удаление товара
 function deleteProduct(category, id) {
     products[category] = products[category].filter(p => p.id !== id); // Удаляем товар из массива
@@ -153,7 +160,7 @@ function deleteProduct(category, id) {
 // Сохранение данных
 async function saveProducts() {
     try {
-        const response = await fetch('https://qew-xnec.onrender.com/api/products', {
+        const response = await fetch('http://localhost:62000/api/products', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -174,7 +181,7 @@ async function saveProducts() {
 // Загрузка данных
 async function loadProducts() {
     try {
-        const response = await fetch('https://qew-xnec.onrender.com/api/products');
+        const response = await fetch('http://localhost:62000/api/products');
         if (response.ok) {
             products = await response.json(); // Обновляем глобальный объект products
             renderProductList(); // Рендерим список товаров
@@ -184,60 +191,6 @@ async function loadProducts() {
         }
     } catch (error) {
         console.error('Ошибка:', error);
-    }
-}
-
-
-
-document.getElementById('product-form').addEventListener('submit', async function (event) {
-    event.preventDefault(); // Предотвращаем стандартную отправку формы
-
-    // Собираем данные из формы
-    const productData = {
-        name: document.getElementById('product-name').value,
-        brand: document.getElementById('product-brand').value,
-        description: document.getElementById('product-description').value,
-        price: parseFloat(document.getElementById('product-price').value),
-        image: document.getElementById('product-image').value,
-        stock: parseInt(document.getElementById('product-stock').value),
-        category: document.getElementById('product-category').value
-    };
-
-    try {
-        // Отправляем данные на сервер
-        const response = await fetch('/api/products', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(productData)
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            alert(data.message); // Уведомление об успехе
-            loadProducts(); // Обновляем список товаров (если у вас есть такая функция)
-        } else {
-            alert('Ошибка при добавлении/изменении товара');
-        }
-    } catch (error) {
-        console.error('Ошибка:', error);
-        alert('Произошла ошибка при отправке данных');
-    }
-});
-
-
-// Сохранение корзины
-function saveCart() {
-    localStorage.setItem("cart", JSON.stringify(cart));
-}
-
-// Загрузка корзины
-function loadCart() {
-    const savedCart = localStorage.getItem("cart");
-    if (savedCart) {
-        cart = JSON.parse(savedCart);
-        renderCartButton(); // Обновляем кнопку корзины
     }
 }
 
@@ -294,6 +247,9 @@ function renderProducts(category, brand) {
         const description = document.createElement("p"); // Создаём описание
         description.textContent = product.description; // Устанавливаем текст описания
 
+        const stock = document.createElement("p");// количество на складе
+        stock.textContent = (`В наличии ${product.stock} шт.`)
+
         const price = document.createElement("p"); // Создаём цену
         price.classList.add("price"); // Добавляем класс
         price.textContent = `Цена: ${product.price} руб.`; // Устанавливаем текст цены
@@ -306,67 +262,45 @@ function renderProducts(category, brand) {
         card.appendChild(title); // Добавляем заголовок в карточку
         card.appendChild(description); // Добавляем описание в карточку
         card.appendChild(price); // Добавляем цену в карточку
+        card.appendChild(stock);// Добавляем наличие в карточку
         card.appendChild(addToCartButton); // Добавляем кнопку в карточку
 
         productsContainer.appendChild(card); // Добавляем карточку в контейнер
     });
 }
 
-// Добавление в корзину
+
+/// Добавление в корзину
 function addToCart(product) {
     cart.push(product); // Добавляем товар в корзину
     saveCart(); // Сохраняем корзину
     renderCartButton(); // Обновляем кнопку корзины
-    alert(`${product.name} добавлен в корзину!`); // Показываем уведомление
+    /*alert(`${product.name} добавлен в корзину!`); // Показываем уведомление*/
 }
 
 // Рендер кнопки корзины
 function renderCartButton() {
     const cartButton = document.getElementById("cart-button");
-    cartButton.textContent = `Корзина (${cart.length})`; // Обновляем текст кнопки
-    cartButton.classList.remove("hidden"); // Показываем кнопку
-    cartButton.addEventListener("click", () => {
-        const cartModal = document.getElementById("cart-modal");
-        cartModal.style.display = "flex"; // Показываем корзину
-        renderCartItems(); // Рендерим товары в корзине
-    });
-}
 
-// Рендер товаров в корзине
-function renderCartItems() {
-    const cartItems = document.getElementById("cart-items");
-    cartItems.innerHTML = ""; // Очищаем контейнер
-
-    let total = 0; // Общая сумма
-
-    cart.forEach((item, index) => {
-        const cartItem = document.createElement("div");
-        cartItem.classList.add("cart-item"); // Добавляем класс для стилизации
-
-        // Отображаем информацию о товаре и крестик для удаления
-        cartItem.innerHTML = `
-      <span>${item.name} - ${item.price} руб.</span>
-      <span class="remove-item" data-index="${index}">&times;</span>
-    `;
-
-        cartItems.appendChild(cartItem); // Добавляем товар в корзину
-        total += item.price; // Считаем общую сумму
-    });
-
-    // Добавляем обработчики событий для крестиков
-    document.querySelectorAll(".remove-item").forEach(button => {
-        button.addEventListener("click", (e) => {
-            const index = e.target.getAttribute("data-index"); // Получаем индекс товара
-            removeFromCart(index); // Удаляем товар из корзины
+    if (cart.length > 0) {
+        // Если в корзине есть товары, показываем кнопку
+        cartButton.textContent = `Корзина (${cart.length})`; // Обновляем текст кнопки
+        cartButton.classList.remove("hidden"); // Показываем кнопку
+        cartButton.addEventListener("click", () => {
+            const cartModal = document.getElementById("cart-modal");
+            cartModal.style.display = "flex"; // Показываем корзину
+            renderCartItems(); // Рендерим товары в корзине
         });
-    });
-
-    document.getElementById("cart-total").textContent = `Общая сумма: ${total} руб.`; // Отображаем общую сумму
+    } else {
+        // Если корзина пуста, скрываем кнопку
+        cartButton.classList.add("hidden");
+    }
 }
 
 // Удаление товара из корзины
 function removeFromCart(index) {
     cart.splice(index, 1); // Удаляем товар из массива по индексу
+    console.log("Корзина после удаления:", cart); // Отладка
     saveCart(); // Сохраняем корзину в localStorage
     renderCartItems(); // Обновляем отображение корзины
     renderCartButton(); // Обновляем кнопку корзины
@@ -376,109 +310,6 @@ function removeFromCart(index) {
 function saveCart() {
     localStorage.setItem("cart", JSON.stringify(cart)); // Сохраняем корзину в localStorage
 }
-
-// Закрытие корзины
-document.getElementById("close-cart").addEventListener("click", () => {
-    document.getElementById("cart-modal").style.display = "none"; // Скрываем корзину
-});
-// Рендер товаров в корзине
-function renderCartItems() {
-    const cartItems = document.getElementById("cart-items");
-    cartItems.innerHTML = ""; // Очищаем контейнер
-
-    let total = 0; // Общая сумма
-
-    cart.forEach((item, index) => {
-        const cartItem = document.createElement("div");
-        cartItem.classList.add("cart-item"); // Добавляем класс для стилизации
-
-        // Отображаем информацию о товаре и крестик для удаления
-        cartItem.innerHTML = `
-      <span>${item.name} - ${item.price} руб.</span>
-      <span class="remove-item" data-index="${index}">&times;</span>
-    `;
-
-        cartItems.appendChild(cartItem); // Добавляем товар в корзину
-        total += item.price; // Считаем общую сумму
-    });
-
-    // Добавляем обработчики событий для крестиков
-    document.querySelectorAll(".remove-item").forEach(button => {
-        button.addEventListener("click", (e) => {
-            const index = e.target.getAttribute("data-index"); // Получаем индекс товара
-            removeFromCart(index); // Удаляем товар из корзины
-        });
-    });
-
-    document.getElementById("cart-total").textContent = `Общая сумма: ${total} руб.`; // Отображаем общую сумму
-}
-
-// Удаление товара из корзины
-function removeFromCart(index) {
-    cart.splice(index, 1); // Удаляем товар из массива по индексу
-    saveCart(); // Сохраняем корзину в localStorage
-    renderCartItems(); // Обновляем отображение корзины
-    renderCartButton(); // Обновляем кнопку корзины
-}
-
-// Сохранение корзины
-function saveCart() {
-    localStorage.setItem("cart", JSON.stringify(cart)); // Сохраняем корзину в localStorage
-}
-
-// Закрытие корзины
-document.getElementById("close-cart").addEventListener("click", () => {
-    document.getElementById("cart-modal").style.display = "none"; // Скрываем корзину
-});
-// Рендер товаров в корзине
-function renderCartItems() {
-    const cartItems = document.getElementById("cart-items");
-    cartItems.innerHTML = ""; // Очищаем контейнер
-
-    let total = 0; // Общая сумма
-
-    cart.forEach((item, index) => {
-        const cartItem = document.createElement("div");
-        cartItem.classList.add("cart-item"); // Добавляем класс для стилизации
-
-        // Отображаем информацию о товаре и крестик для удаления
-        cartItem.innerHTML = `
-      <span>${item.name} - ${item.price} руб.</span>
-      <span class="remove-item" data-index="${index}">&times;</span>
-    `;
-
-        cartItems.appendChild(cartItem); // Добавляем товар в корзину
-        total += item.price; // Считаем общую сумму
-    });
-
-    // Добавляем обработчики событий для крестиков
-    document.querySelectorAll(".remove-item").forEach(button => {
-        button.addEventListener("click", (e) => {
-            const index = e.target.getAttribute("data-index"); // Получаем индекс товара
-            removeFromCart(index); // Удаляем товар из корзины
-        });
-    });
-
-    document.getElementById("cart-total").textContent = `Общая сумма: ${total} руб.`; // Отображаем общую сумму
-}
-
-// Удаление товара из корзины
-function removeFromCart(index) {
-    cart.splice(index, 1); // Удаляем товар из массива по индексу
-    saveCart(); // Сохраняем корзину в localStorage
-    renderCartItems(); // Обновляем отображение корзины
-    renderCartButton(); // Обновляем кнопку корзины
-}
-
-// Сохранение корзины
-function saveCart() {
-    localStorage.setItem("cart", JSON.stringify(cart)); // Сохраняем корзину в localStorage
-}
-
-// Закрытие корзины
-document.getElementById("close-cart").addEventListener("click", () => {
-    document.getElementById("cart-modal").style.display = "none"; // Скрываем корзину
-});
 
 // Загрузка корзины
 function loadCart() {
@@ -489,17 +320,42 @@ function loadCart() {
     }
 }
 
-// Рендер кнопки корзины
-function renderCartButton() {
-    const cartButton = document.getElementById("cart-button");
-    cartButton.textContent = `Корзина (${cart.length})`; // Обновляем текст кнопки
-    cartButton.classList.remove("hidden"); // Показываем кнопку
-    cartButton.addEventListener("click", () => {
-        const cartModal = document.getElementById("cart-modal");
-        cartModal.style.display = "flex"; // Показываем корзину
-        renderCartItems(); // Рендерим товары в корзине
+// Рендер товаров в корзине
+function renderCartItems() {
+    const cartItems = document.getElementById("cart-items");
+    cartItems.innerHTML = ""; // Очищаем контейнер
+
+    let total = 0; // Общая сумма
+
+    cart.forEach((item, index) => {
+        const cartItem = document.createElement("div");
+        cartItem.classList.add("cart-item"); // Добавляем класс для стилизации
+
+        // Отображаем информацию о товаре и крестик для удаления
+        cartItem.innerHTML = `
+      <span>${item.name} - ${item.price} руб.</span>
+      <span class="remove-item" data-index="${index}">&times;</span>
+    `;
+
+        cartItems.appendChild(cartItem); // Добавляем товар в корзину
+        total += item.price; // Считаем общую сумму
     });
+
+    // Добавляем обработчики событий для крестиков
+    document.querySelectorAll(".remove-item").forEach(button => {
+        button.addEventListener("click", (e) => {
+            const index = e.target.getAttribute("data-index"); // Получаем индекс товара
+            removeFromCart(index); // Удаляем товар из корзины
+        });
+    });
+
+    document.getElementById("cart-total").textContent = `Общая сумма: ${total} руб.`; // Отображаем общую сумму
 }
+
+// Закрытие корзины
+document.getElementById("close-cart").addEventListener("click", () => {
+    document.getElementById("cart-modal").style.display = "none"; // Скрываем корзину
+});
 
 // Оформление самовывоза
 document.getElementById("pickup-form").addEventListener("submit", (e) => {
@@ -591,11 +447,3 @@ document.addEventListener("DOMContentLoaded", () => {
     const cartModal = document.getElementById("cart-modal");
     cartModal.style.display = "none";
 });
-// Инициализация
-document.addEventListener("DOMContentLoaded", () => {
-    showAgeVerification(); // Показываем окно подтверждения возраста
-    loadProducts(); // Загружаем товары из localStorage
-    renderCategories(); // Рендерим категории
-    renderSortButtons(); // Рендерим кнопки сортировки
-}
-);
