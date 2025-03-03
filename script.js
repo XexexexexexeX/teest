@@ -53,7 +53,7 @@ function toggleProductList() {
 document.getElementById("toggle-product-list").addEventListener("click", toggleProductList);
 
 // Обработка формы
-document.getElementById("product-form").addEventListener("add/edd", (e) => {
+document.getElementById("product-form").addEventListener("submit", (e) => {
     e.preventDefault(); // Отменяем стандартное поведение формы
 
     const id = Date.now(); // Уникальный ID
