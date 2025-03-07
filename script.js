@@ -459,9 +459,16 @@ document.getElementById("close-cart").addEventListener("click", () => {
 
 
 let userChatId = null;
+let tgUsername = "Не указан"; // Значение по умолчанию
 
 if (typeof Telegram !== 'undefined' && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
-    userChatId = Telegram.WebApp.initDataUnsafe.user.id; // Получаем chat_id пользователя
+    const userData = Telegram.WebApp.initDataUnsafe.user;
+    console.log('Данные пользователя:', userData);
+
+    userChatId = userData.id; // Получаем chat_id пользователя
+    tgUsername = userData.username || userData.first_name || "Не указан";
+} else {
+    console.error('Telegram.WebApp или данные пользователя недоступны');
 }
 
 // Оформление самовывоза
@@ -475,12 +482,6 @@ document.getElementById("pickup-form").addEventListener("submit", async (e) => {
 
     const name = document.getElementById("pickup-name").value; // Имя пользователя
     const phone = document.getElementById("pickup-phone").value; // Телефон пользователя
-
-    let tgUsername = "Не указан"; // Значение по умолчанию
-
-    if (typeof Telegram !== 'undefined' && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
-        tgUsername = Telegram.WebApp.initDataUnsafe.user.username || "Не указан";
-    }
 
     // Рассчитываем общую сумму заказа
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -500,6 +501,8 @@ document.getElementById("pickup-form").addEventListener("submit", async (e) => {
         userChatId,
     };
 
+    console.log('Данные заказа:', orderData);
+    
     try {
         // Отправляем данные на сервер
         const response = await fetch('https://qew-xnec.onrender.com/order', {
