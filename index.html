@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Магазин электронных сигарет</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background-image: url('/smoky-background_635062-720.avif');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+    </style>
 </head>
 <body>
     <!-- Модальное окно для подтверждения возраста -->
@@ -23,6 +35,7 @@
     <div id="admin-panel" class="admin-panel hidden">
         <h2>Админ-панель</h2>
         <form id="product-form">
+            <input type="hidden" id="product-id" /> <!-- Скрытое поле для ID -->
             <input type="text" id="product-name" placeholder="Название товара" required>
             <input type="text" id="product-brand" placeholder="Бренд" required>
             <input type="text" id="product-description" placeholder="Описание" required>
@@ -58,7 +71,8 @@
     <div id="cart-modal" class="modal">
         <div class="modal-content">
             <h2>Корзина</h2>
-            <div id="cart-items"></div>
+            <div id="cart-items">   
+            </div>
             <p id="cart-total"></p>
             <form id="pickup-form">
                 <input type="text" id="pickup-name" placeholder="Ваше имя" required>
