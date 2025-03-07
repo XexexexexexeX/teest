@@ -7,6 +7,8 @@ let products = {
     cartridges: []
 };
 
+const Fetch_URL = ('https://qew-xnec.onrender.com/api/products');
+
 // Предупреждение о возрасте
 function showAgeVerification() {
     const modal = document.getElementById("age-verification-modal");
@@ -18,7 +20,7 @@ function showAgeVerification() {
 
     document.getElementById("age-no").addEventListener("click", () => {
         alert("Доступ запрещён.");
-        window.close(); // Закрываем сайт
+        window.location.href = "https://ya.ru/"; // Закрываем сайт
     });
 }
 
@@ -52,27 +54,48 @@ function toggleProductList() {
 // Добавьте обработчик события для кнопки
 document.getElementById("toggle-product-list").addEventListener("click", toggleProductList);
 
-// Обработка формы
-document.getElementById("product-form").addEventListener("submit", (e) => {
-    e.preventDefault(); // Отменяем стандартное поведение формы
+// Функция для получения актуальных данных с сервера
+async function fetchProducts() {
+    const response = await fetch(Fetch_URL); // Запрос к серверу
+    const data = await response.json();
+    products = data; // Обновляем локальные данные
+}
 
-    const id = Date.now(); // Уникальный ID
-    const name = document.getElementById("product-name").value; // Название товара
-    const brand = document.getElementById("product-brand").value; // Бренд
-    const description = document.getElementById("product-description").value; // Описание
-    const price = parseFloat(document.getElementById("product-price").value); // Цена
-    const image = document.getElementById("product-image").value; // Ссылка на изображение
-    const stock = parseInt(document.getElementById("product-stock").value); // Количество на складе
-    const category = document.getElementById("product-category").value; // Категория
+// Обработка формы с предварительным обновлением данных
+document.getElementById("product-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    await fetchProducts(); // Обновляем данные перед выполнением действий
 
-    const product = { id, name, brand, description, price, image, stock }; // Создаём объект товара
+    const id = document.getElementById("product-id").value || Date.now(); // Используем существующий ID или создаем новый
+    const name = document.getElementById("product-name").value;
+    const brand = document.getElementById("product-brand").value;
+    const description = document.getElementById("product-description").value;
+    const price = parseFloat(document.getElementById("product-price").value);
+    const image = document.getElementById("product-image").value;
+    const stock = parseInt(document.getElementById("product-stock").value);
+    const category = document.getElementById("product-category").value;
 
-    // Добавление или обновление товара
-    const existingProductIndex = products[category].findIndex(p => p.id === id);
+    const updatedProduct = {
+        ...(name && { name }),
+        ...(brand && { brand }),
+        ...(description && { description }),
+        ...(!isNaN(price) && { price }),
+        ...(image && { image }),
+        ...(!isNaN(stock) && { stock }),
+    };
+
+    const existingProductIndex = products[category].findIndex(p => p.id === Number(id));
+
     if (existingProductIndex !== -1) {
-        products[category][existingProductIndex] = product; // Обновляем товар
+        // Если товар существует, обновляем его
+        products[category][existingProductIndex] = {
+            ...products[category][existingProductIndex],
+            ...updatedProduct,
+        };
     } else {
-        products[category].push(product); // Добавляем новый товар
+        // Если это новый товар, добавляем его
+        const newProduct = { id: Number(id), name, brand, description, price, image, stock, category };
+        products[category].push(newProduct);
     }
 
     renderProductList(); // Рендерим список товаров
@@ -138,6 +161,7 @@ function renderProductList() {
 function editProduct(category, id) {
     const product = products[category].find(p => p.id === id); // Находим товар по ID
     if (product) {
+        document.getElementById("product-id").value = product.id; // Сохраняем ID в скрытое поле
         document.getElementById("product-name").value = product.name; // Заполняем форму данными товара
         document.getElementById("product-brand").value = product.brand;
         document.getElementById("product-description").value = product.description;
@@ -147,6 +171,8 @@ function editProduct(category, id) {
         document.getElementById("product-category").value = category;
     }
 }
+
+
 
 
 // Удаление товара
@@ -160,7 +186,7 @@ function deleteProduct(category, id) {
 // Сохранение данных
 async function saveProducts() {
     try {
-        const response = await fetch('https://qew-xnec.onrender.com/api/products', {
+        const response = await fetch(Fetch_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -181,7 +207,7 @@ async function saveProducts() {
 // Загрузка данных
 async function loadProducts() {
     try {
-        const response = await fetch('https://qew-xnec.onrender.com/api/products');
+        const response = await fetch(Fetch_URL);
         if (response.ok) {
             products = await response.json(); // Обновляем глобальный объект products
             renderProductList(); // Рендерим список товаров
@@ -247,35 +273,68 @@ function renderProducts(category, brand) {
         const description = document.createElement("p"); // Создаём описание
         description.textContent = product.description; // Устанавливаем текст описания
 
-        const stock = document.createElement("p");// количество на складе
-        stock.textContent = (`В наличии ${product.stock} шт.`)
+        const stock = document.createElement("p"); // Количество на складе
+        stock.textContent = `В наличии ${product.stock} шт.`;
 
         const price = document.createElement("p"); // Создаём цену
         price.classList.add("price"); // Добавляем класс
         price.textContent = `Цена: ${product.price} руб.`; // Устанавливаем текст цены
 
+        const quantityInput = document.createElement("input"); // Поле для ввода количества
+        quantityInput.type = "number";
+        quantityInput.min = 1;
+        quantityInput.max = product.stock; // Максимальное количество — количество на складе
+        quantityInput.value = 1; // Значение по умолчанию
+        quantityInput.classList.add("quantity-input");
+
+        // Ограничение ввода
+        quantityInput.addEventListener("input", (e) => {
+            const value = parseInt(e.target.value);
+            if (value > product.stock) {
+                e.target.value = product.stock; // Устанавливаем максимальное значение
+            } else if (value < 1) {
+                e.target.value = 1; // Устанавливаем минимальное значение
+            }
+        });
+
         const addToCartButton = document.createElement("button"); // Создаём кнопку
         addToCartButton.textContent = "Добавить в корзину"; // Устанавливаем текст кнопки
-        addToCartButton.addEventListener("click", () => addToCart(product)); // Добавляем обработчик
+        addToCartButton.addEventListener("click", () => {
+            const quantity = parseInt(quantityInput.value);
+            if (quantity > 0 && quantity <= product.stock) {
+                addToCart(product, quantity); // Добавляем товар в корзину с указанным количеством
+            } else {
+                alert("Укажите корректное количество.");
+            }
+        });
 
         card.appendChild(image); // Добавляем изображение в карточку
         card.appendChild(title); // Добавляем заголовок в карточку
         card.appendChild(description); // Добавляем описание в карточку
         card.appendChild(price); // Добавляем цену в карточку
-        card.appendChild(stock);// Добавляем наличие в карточку
+        card.appendChild(stock); // Добавляем наличие в карточку
+        card.appendChild(quantityInput); // Добавляем поле для ввода количества
         card.appendChild(addToCartButton); // Добавляем кнопку в карточку
 
         productsContainer.appendChild(card); // Добавляем карточку в контейнер
     });
 }
-
-
-/// Добавление в корзину
-function addToCart(product) {
-    cart.push(product); // Добавляем товар в корзину
+// Добавление в корзину с количеством
+function addToCart(product, quantity) {
+    if (quantity > product.stock) {
+        alert("Недостаточно товара на складе.");
+        return;
+    }
+    // Добавляем товар в корзину вместе с количеством и stock
+    cart.push({
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        quantity: quantity,
+        stock: product.stock, // Сохраняем stock
+    });
     saveCart(); // Сохраняем корзину
     renderCartButton(); // Обновляем кнопку корзины
-    /*alert(`${product.name} добавлен в корзину!`); // Показываем уведомление*/
 }
 
 // Рендер кнопки корзины
@@ -290,6 +349,7 @@ function renderCartButton() {
             const cartModal = document.getElementById("cart-modal");
             cartModal.style.display = "flex"; // Показываем корзину
             renderCartItems(); // Рендерим товары в корзине
+            console.log("Корзина:", cart); //111111111111111111111111111111111111111111111111111111111111111111
         });
     } else {
         // Если корзина пуста, скрываем кнопку
@@ -316,6 +376,11 @@ function loadCart() {
     const savedCart = localStorage.getItem("cart");
     if (savedCart) {
         cart = JSON.parse(savedCart); // Загружаем корзину из localStorage
+
+        // Удаляем товары с undefined категорией
+        cart = cart.filter(item => item.category !== undefined);
+
+        saveCart(); // Сохраняем обновленную корзину
         renderCartButton(); // Обновляем кнопку корзины
     }
 }
@@ -331,14 +396,46 @@ function renderCartItems() {
         const cartItem = document.createElement("div");
         cartItem.classList.add("cart-item"); // Добавляем класс для стилизации
 
-        // Отображаем информацию о товаре и крестик для удаления
+        // Отображаем информацию о товаре (название, описание, цена, количество) и крестик для удаления
         cartItem.innerHTML = `
-      <span>${item.name} - ${item.price} руб.</span>
-      <span class="remove-item" data-index="${index}">&times;</span>
-    `;
+            <span>${item.name} - ${item.price} руб. x ${item.quantity} = ${item.price * item.quantity} руб.</span>
+            <p>${item.description}</p>
+            <input type="number" class="cart-quantity" value="${item.quantity}" min="1" max="${item.stock}" data-index="${index}">
+            <span class="remove-item" data-index="${index}">&times;</span>
+        `;
 
         cartItems.appendChild(cartItem); // Добавляем товар в корзину
-        total += item.price; // Считаем общую сумму
+        total += item.price * item.quantity; // Считаем общую сумму
+    });
+
+    // Добавляем обработчики событий для изменения количества
+    document.querySelectorAll(".cart-quantity").forEach(input => {
+        input.addEventListener("input", (e) => {
+            const index = e.target.getAttribute("data-index"); // Получаем индекс товара
+            const newQuantity = parseInt(e.target.value); // Новое количество
+            const maxStock = cart[index].stock; // Используем сохранённое значение stock
+
+            if (newQuantity > maxStock) {
+                e.target.value = maxStock; // Устанавливаем максимальное значение
+            } else if (newQuantity < 1) {
+                e.target.value = 1; // Устанавливаем минимальное значение
+            }
+        });
+
+        input.addEventListener("change", (e) => {
+            const index = e.target.getAttribute("data-index"); // Получаем индекс товара
+            const newQuantity = parseInt(e.target.value); // Новое количество
+            const maxStock = cart[index].stock; // Используем сохранённое значение stock
+
+            if (newQuantity > 0 && newQuantity <= maxStock) {
+                cart[index].quantity = newQuantity; // Обновляем количество
+                saveCart(); // Сохраняем корзину
+                renderCartItems(); // Перерисовываем корзину
+            } else {
+                alert("Недостаточно товара на складе.");
+                e.target.value = cart[index].quantity; // Возвращаем предыдущее значение
+            }
+        });
     });
 
     // Добавляем обработчики событий для крестиков
@@ -352,28 +449,81 @@ function renderCartItems() {
     document.getElementById("cart-total").textContent = `Общая сумма: ${total} руб.`; // Отображаем общую сумму
 }
 
+console.log(cart);
+
 // Закрытие корзины
 document.getElementById("close-cart").addEventListener("click", () => {
     document.getElementById("cart-modal").style.display = "none"; // Скрываем корзину
 });
+
+
+
+let userChatId = null;
+
+if (typeof Telegram !== 'undefined' && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
+    userChatId = Telegram.WebApp.initDataUnsafe.user.id; // Получаем chat_id пользователя
+}
 
 // Оформление самовывоза
-document.getElementById("pickup-form").addEventListener("submit", (e) => {
+document.getElementById("pickup-form").addEventListener("submit", async (e) => {
     e.preventDefault(); // Отменяем стандартное поведение формы
+
+    if (cart.length === 0) {
+        alert("Ваша корзина пуста. Добавьте товары перед оформлением заказа.");
+        return; // Прерываем выполнение функции
+    }
+
     const name = document.getElementById("pickup-name").value; // Имя пользователя
     const phone = document.getElementById("pickup-phone").value; // Телефон пользователя
-    alert(`Спасибо, ${name}! Ваш заказ готов к самовывозу. Мы свяжемся с вами по номеру ${phone}.`); // Показываем уведомление
-    cart = []; // Очищаем корзину
-    saveCart(); // Сохраняем корзину
-    renderCartButton(); // Обновляем кнопку корзины
-    document.getElementById("cart-modal").style.display = "none"; // Скрываем корзину
-});
 
-// Закрытие корзины
-document.getElementById("close-cart").addEventListener("click", () => {
-    document.getElementById("cart-modal").style.display = "none"; // Скрываем корзину
-});
+    let tgUsername = "Не указан"; // Значение по умолчанию
 
+    if (typeof Telegram !== 'undefined' && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
+        tgUsername = Telegram.WebApp.initDataUnsafe.user.username || "Не указан";
+    }
+
+    // Рассчитываем общую сумму заказа
+    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    // Формируем данные для отправки
+    const orderData = {
+        name,
+        phone,
+        tgUsername,
+        items: cart.map(item => ({
+            name: item.name,
+            description: item.description,
+            price: item.price,
+            quantity: item.quantity, // Добавляем количество
+        })),
+        total, // Общая сумма заказа
+        userChatId,
+    };
+
+    try {
+        // Отправляем данные на сервер
+        const response = await fetch('https://qew-xnec.onrender.com/order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        });
+
+        if (response.ok) {
+            alert(`Спасибо, ${name}! Ваш заказ оформлен. Мы свяжемся с вами по номеру ${phone}.`);
+            cart = [];
+            saveCart(); // Сохраняем корзину
+            renderCartButton(); // Обновляем кнопку корзины
+            document.getElementById("cart-modal").style.display = "none"; // Скрываем корзину
+        } else {
+            alert("Ошибка при оформлении заказа. Попробуйте ещё раз.");
+        }
+    } catch (error) {
+        console.error("Ошибка:", error);
+        alert("Произошла ошибка при отправке данных.");
+    }
+});
 
 let sortDirection = {
     price: "asc", // Направление сортировки по цене
