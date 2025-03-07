@@ -461,14 +461,20 @@ document.getElementById("close-cart").addEventListener("click", () => {
 let userChatId = null;
 let tgUsername = "Не указан"; // Значение по умолчанию
 
-if (typeof Telegram !== 'undefined' && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
-    const userData = Telegram.WebApp.initDataUnsafe.user;
-    console.log('Данные пользователя:', userData);
+if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+    Telegram.WebApp.ready(); // Инициализация WebApp
 
-    userChatId = userData.id; // Получаем chat_id пользователя
-    tgUsername = userData.username || userData.first_name || "Не указан";
+    if (Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
+        const userData = Telegram.WebApp.initDataUnsafe.user;
+        console.log('Данные пользователя:', userData);
+
+        userChatId = userData.id; // Получаем chat_id пользователя
+        tgUsername = userData.username || userData.first_name || "Не указан";
+    } else {
+        console.error('Данные пользователя отсутствуют в initDataUnsafe');
+    }
 } else {
-    console.error('Telegram.WebApp или данные пользователя недоступны');
+    console.error('Telegram.WebApp недоступен');
 }
 
 // Оформление самовывоза
