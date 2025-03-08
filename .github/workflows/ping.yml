@@ -2,7 +2,8 @@ name: Ping Render Server
 
 on:
   schedule:
-    - cron: '*/1 * * * *' # Каждые 10 минут
+    - cron: '*/1 * * * *' # Каждую минуту
+  workflow_dispatch: # Добавьте этот триггер для ручного запуска
 
 jobs:
   ping:
