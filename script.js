@@ -7,7 +7,7 @@ let products = {
     cartridges: []
 };
 
-const Fetch_URL = ('https://185.251.89.127:62000/api/products');
+const Fetch_URL = ('https://http://tabachoook.ru/api/products');
 
 // Предупреждение о возрасте
 function showAgeVerification() {
@@ -186,7 +186,7 @@ function deleteProduct(category, id) {
 // Сохранение данных
 async function saveProducts() {
     try {
-        const response = await fetch('https://185.251.89.127:62000/api/products', {
+        const response = await fetch('https://http://tabachoook.ru/api/products', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -207,7 +207,7 @@ async function saveProducts() {
 // Загрузка данных
 async function loadProducts() {
     try {
-        const response = await fetch('https://185.251.89.127:62000/api/products');
+        const response = await fetch('https://http://tabachoook.ru/api/products');
         if (response.ok) {
             products = await response.json(); // Обновляем глобальный объект products
             renderProductList(); // Рендерим список товаров
@@ -511,7 +511,7 @@ document.getElementById("pickup-form").addEventListener("submit", async (e) => {
     
     try {
         // Отправляем данные на сервер
-        const response = await fetch('https://185.251.89.127:62000/order', {
+        const response = await fetch('https://http://tabachoook.ru/order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
