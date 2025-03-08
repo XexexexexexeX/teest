@@ -7,7 +7,7 @@ let products = {
     cartridges: []
 };
 
-const Fetch_URL = ('http://185.251.89.127:62000/api/products
+const Fetch_URL = ('http://185.251.89.127:62000/api/products');
 
 // Предупреждение о возрасте
 function showAgeVerification() {
