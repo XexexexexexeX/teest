@@ -19,11 +19,13 @@ h1 {
     color: #ffffff;
 }
 
+/* Общие стили для .categories, .sub-categories, .sort-buttons */
 .categories, .sort-buttons {
     display: flex;
     gap: 10px;
     justify-content: center;
     margin-bottom: 20px;
+    align-items: center; /* Выравниваем содержимое по центру вертикально */
 }
 
 /* Стили для #sub-categories */
@@ -38,6 +40,8 @@ h1 {
     margin: 0; /* Убираем внешние отступы */
     box-sizing: border-box; /* Учитываем padding в общей ширине */
     scroll-padding: 16px; /* Отступы для прокрутки */
+    height: auto; /* Автоматическая высота */
+    min-height: 50px; /* Минимальная высота для выравнивания */
 }
 
 #sub-categories button {
