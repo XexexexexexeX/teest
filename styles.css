@@ -57,7 +57,6 @@ h1 {
         white-space: nowrap; /* Запрет переноса текста внутри кнопки */
         flex-shrink: 0; /* Запрещаем сжатие кнопок */
     }
-
         /* Убираем отступ у последней кнопки */
         #sub-categories button:last-child {
             margin-right: 0;
