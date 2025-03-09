@@ -23,50 +23,53 @@ h1 {
     display: flex;
     gap: 10px;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: auto;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
-/* Стили для контейнера подкатегорий */
 #sub-categories {
-    display: flex; /* Отключаем flex */
+    display: flex; 
+    justify-content: space-around; 
+    align-items: center; /* Выравниваем кнопки по центру вертикально */
     width: 100%; /* Занимает всю ширину родительского элемента */
     overflow-x: auto; /* Горизонтальная прокрутка, если содержимое не помещается */
     white-space: nowrap; /* Запрет переноса кнопок на новую строку */
-    padding: 10px 0; /* Небольшие отступы для красоты */
-    margin-bottom: 20px; /* Отступ снизу */
+    padding: 10px; /* Отступы от края экрана */
+    margin: 0; /* Убираем внешние отступы */
+    box-sizing: border-box; /* Учитываем padding в общей ширине */
+    scroll-padding: 16px; /* Отступы для прокрутки */
+    margin-bottom: auto;
 }
 
     /* Стили для кнопок */
     #sub-categories button {
         display: inline-block; /* Кнопки выстраиваются в одну строку */
-        margin: 0 5px; /* Отступы между кнопками */
         padding: 10px 15px; /* Внутренние отступы */
-        font-size: 14px; /* Размер текста */
-        border: 1px solid #5b5656; /* Граница кнопки */
-        border-radius: 5px; /* Скругление углов */
-        background-color: #333; /* Цвет фона */
-        cursor: pointer; /* Курсор в виде указателя */
+        font-size: 14px;
+        border: 1px solid #5b5656;
+        border-radius: 5px;
+        background-color: #333;
+        color: #fff; /* Цвет текста */
+        cursor: pointer;
         transition: background-color 0.3s ease; /* Плавное изменение цвета */
-        margin-right: 10px; /* Отступ между кнопками */
+        margin-right: 10px;
+        white-space: nowrap; /* Запрет переноса текста внутри кнопки */
+        flex-shrink: 0; /* Запрещаем сжатие кнопок */
     }
 
-        #sub-categories button:hover {
-            background-color: #555; /* Изменение цвета при наведении */
-        }
-
-/* Общие стили для кнопок */
 button {
     padding: 10px 20px;
-    border: 1px solid #5b5656; /* Граница кнопки (новый цвет) */
+    border: 1px solid #5b5656;
     border-radius: 5px;
     background-color: #333;
     color: #fff;
     cursor: pointer;
 }
 
-button:hover {
-    background-color: #555;
-}
+    button:hover {
+        background-color: #555;
+    }
 
 #cart-button {
     position: fixed;
