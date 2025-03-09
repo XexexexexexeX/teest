@@ -19,67 +19,40 @@ h1 {
     color: #ffffff;
 }
 
-/* Общие стили для .categories, .sub-categories, .sort-buttons */
 .categories, .sort-buttons {
     display: flex;
     gap: 10px;
     justify-content: center;
     margin-bottom: 20px;
-    align-items: center; /* Выравниваем содержимое по центру вертикально */
 }
 
-/* Стили для #sub-categories */
+/* Стили для контейнера подкатегорий */
 #sub-categories {
-    display: flex; /* Включаем flex */
-    justify-content: flex-start; /* Выравниваем кнопки по левому краю */
-    align-items: center; /* Выравниваем кнопки по центру вертикально */
+    display: flex; /* Отключаем flex */
     width: 100%; /* Занимает всю ширину родительского элемента */
     overflow-x: auto; /* Горизонтальная прокрутка, если содержимое не помещается */
     white-space: nowrap; /* Запрет переноса кнопок на новую строку */
-    padding: 10px 0; /* Внутренние отступы сверху и снизу */
-    margin: 0; /* Убираем внешние отступы */
-    box-sizing: border-box; /* Учитываем padding в общей ширине */
-    scroll-padding: 16px; /* Отступы для прокрутки */
-    height: auto; /* Автоматическая высота */
-    min-height: 50px; /* Минимальная высота для выравнивания */
+    padding: 10px 0; /* Небольшие отступы для красоты */
+    margin-bottom: 20px; /* Отступ снизу */
 }
 
-#sub-categories button {
-    display: inline-block; /* Кнопки выстраиваются в одну строку */
-    padding: 10px 15px; /* Внутренние отступы */
-    font-size: 14px; /* Размер текста */
-    border: 1px solid #5b5656; /* Граница кнопки (новый цвет) */
-    border-radius: 5px; /* Скругление углов */
-    background-color: #333; /* Цвет фона кнопки */
-    color: #fff; /* Цвет текста */
-    cursor: pointer; /* Курсор в виде указателя */
-    transition: background-color 0.3s ease; /* Плавное изменение цвета */
-    margin-right: 10px; /* Отступ между кнопками */
-    white-space: nowrap; /* Запрет переноса текста внутри кнопки */
-    flex-shrink: 0; /* Запрещаем сжатие кнопок */
-}
-
-#sub-categories button:last-child {
-    margin-right: 0; /* Убираем отступ у последней кнопки */
-}
-
-#sub-categories button:hover {
-    background-color: #555; /* Изменение цвета при наведении */
-}
-
-/* Стили для мобильных устройств */
-@media (max-width: 768px) {
-    #sub-categories {
-        padding: 5px 0; /* Уменьшаем отступы для мобильных */
-        scroll-padding: 12px; /* Отступы для прокрутки на мобильных */
-    }
-
+    /* Стили для кнопок */
     #sub-categories button {
-        padding: 8px 12px; /* Уменьшаем отступы внутри кнопок */
-        font-size: 12px; /* Уменьшаем размер текста */
-        margin-right: 5px; /* Уменьшаем отступ между кнопками */
+        display: inline-block; /* Кнопки выстраиваются в одну строку */
+        margin: 0 5px; /* Отступы между кнопками */
+        padding: 10px 15px; /* Внутренние отступы */
+        font-size: 14px; /* Размер текста */
+        border: 1px solid #5b5656; /* Граница кнопки */
+        border-radius: 5px; /* Скругление углов */
+        background-color: #333; /* Цвет фона */
+        cursor: pointer; /* Курсор в виде указателя */
+        transition: background-color 0.3s ease; /* Плавное изменение цвета */
+        margin-right: 10px; /* Отступ между кнопками */
     }
-}
+
+        #sub-categories button:hover {
+            background-color: #555; /* Изменение цвета при наведении */
+        }
 
 /* Общие стили для кнопок */
 button {
