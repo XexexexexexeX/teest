@@ -19,11 +19,6 @@ h1 {
     color: #ffffff;
 }
 
-h1 {
-    text-align: center;
-    color: #ffffff;
-}
-
 .categories, .sort-buttons {
     display: flex;
     gap: 10px;
