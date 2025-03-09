@@ -19,14 +19,18 @@ h1 {
     color: #ffffff;
 }
 
-.categories, .sort-buttons {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
+.container {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+    margin: 0 auto;
 }
 
-/* Общие стили для .categories, .sub-categories, .sort-buttons */
+h1 {
+    text-align: center;
+    color: #ffffff;
+}
+
 .categories, .sort-buttons {
     display: flex;
     gap: 10px;
@@ -52,7 +56,7 @@ h1 {
     display: inline-block; /* Кнопки выстраиваются в одну строку */
     padding: 10px 15px; /* Внутренние отступы */
     font-size: 14px; /* Размер текста */
-    border: 1px solid #ccc; /* Граница кнопки */
+    border: 1px solid #5b5656; /* Граница кнопки (новый цвет) */
     border-radius: 5px; /* Скругление углов */
     background-color: #333; /* Цвет фона кнопки */
     color: #fff; /* Цвет текста */
@@ -85,9 +89,10 @@ h1 {
     }
 }
 
+/* Общие стили для кнопок */
 button {
     padding: 10px 20px;
-    border: 1px solid #5b5656;
+    border: 1px solid #5b5656; /* Граница кнопки (новый цвет) */
     border-radius: 5px;
     background-color: #333;
     color: #fff;
