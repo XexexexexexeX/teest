@@ -25,12 +25,14 @@ h1 {
     margin-bottom: 20px;
 }
 
+/* Общие стили для контейнера и кнопок */
 #sub-categories {
   width: 100%; /* Занимает всю ширину родительского элемента */
   overflow-x: auto; /* Горизонтальная прокрутка, если содержимое не помещается */
   white-space: nowrap; /* Запрет переноса кнопок на новую строку */
-  padding: 10px 0; /* Небольшие отступы для красоты */
-  margin-bottom: 20px; /* Отступ снизу */
+  padding: 10px 0; /* Внутренние отступы сверху и снизу */
+  margin: 0; /* Убираем внешние отступы */
+  box-sizing: border-box; /* Учитываем padding в общей ширине */
 }
 
 #sub-categories button {
@@ -39,7 +41,8 @@ h1 {
   font-size: 14px; /* Размер текста */
   border: 1px solid #ccc; /* Граница кнопки */
   border-radius: 5px; /* Скругление углов */
-  background-color: #333; /* Цвет фона */
+  background-color: #333; /* Цвет фона кнопки */
+  color: #fff; /* Цвет текста */
   cursor: pointer; /* Курсор в виде указателя */
   transition: background-color 0.3s ease; /* Плавное изменение цвета */
   margin-right: 10px; /* Отступ между кнопками */
@@ -51,7 +54,7 @@ h1 {
 }
 
 #sub-categories button:hover {
-  background-color: #e0e0e0; /* Изменение цвета при наведении */
+  background-color: #555; /* Изменение цвета при наведении */
 }
 
 /* Стили для мобильных устройств */
