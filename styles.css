@@ -37,8 +37,6 @@ h1 {
 /* Стили для кнопок */
 #sub-categories button {
   display: inline-block; /* Кнопки выстраиваются в одну строку */
-  min-width: 120px; /* Минимальная ширина кнопки */
-  margin: 0 5px; /* Отступы между кнопками */
   padding: 10px 15px; /* Внутренние отступы */
   font-size: 14px; /* Размер текста */
   border: 1px solid #ccc; /* Граница кнопки */
@@ -46,6 +44,11 @@ h1 {
   background-color: #f9f9f9; /* Цвет фона */
   cursor: pointer; /* Курсор в виде указателя */
   transition: background-color 0.3s ease; /* Плавное изменение цвета */
+  margin-right: 10px; /* Отступ между кнопками */
+}
+
+#sub-categories button:last-child {
+  margin-right: 0; /* Убираем отступ у последней кнопки */
 }
 
 #sub-categories button:hover {
