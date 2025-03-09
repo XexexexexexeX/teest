@@ -61,20 +61,6 @@ h1 {
     background-color: #555; /* Изменение цвета при наведении */
 }
 
-/* Стили для мобильных устройств */
-@media (max-width: 768px) {
-    #sub-categories {
-        padding: 5px 12px; /* Уменьшаем отступы для мобильных */
-        scroll-padding: 12px; /* Отступы для прокрутки на мобильных */
-    }
-
-    #sub-categories button {
-        padding: 8px 12px; /* Уменьшаем отступы внутри кнопок */
-        font-size: 12px; /* Уменьшаем размер текста */
-        margin-right: 5px; /* Уменьшаем отступ между кнопками */
-    }
-}
-
 button {
     padding: 10px 20px;
     border: 1px solid #5b5656;
