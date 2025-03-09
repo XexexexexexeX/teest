@@ -58,6 +58,11 @@ h1 {
         flex-shrink: 0; /* Запрещаем сжатие кнопок */
     }
 
+        /* Убираем отступ у последней кнопки */
+        #sub-categories button:last-child {
+            margin-right: 0;
+        }
+
 button {
     padding: 10px 20px;
     border: 1px solid #5b5656;
