@@ -24,6 +24,10 @@ function showAgeVerification() {
     });
 }
 
+function formatPrice(price) {
+    return `${new Intl.NumberFormat('ru-RU').format(price)}`;
+}
+
 // Вход в админ-панель
 document.getElementById("admin-login").addEventListener("click", () => {
     const password = prompt("Введите пароль:");
@@ -136,7 +140,7 @@ function renderProductList() {
                 <h3>${product.name}</h3>
                 <p>Бренд: ${product.brand}</p>
                 <p>Описание: ${product.description}</p>
-                <p>Цена: ${formatPrice(product.price)</p>
+                <p>Цена: ${formatPrice(product.price)} руб.</p>
                 <p>Наличие: ${product.stock} шт.</p>
                 <button onclick="editProduct('${category}', ${product.id})">Изменить</button>
                 <button onclick="deleteProduct('${category}', ${product.id})">Удалить</button>
@@ -220,11 +224,6 @@ async function loadProducts() {
     }
 }
 
-function formatPrice(price) {
-    const formattedPrice = new Intl.NumberFormat('ru-RU').format(price);
-    return `${formattedPrice} руб`;
-}
-
 // Рендер категорий
 function renderCategories() {
     const categoriesContainer = document.getElementById("categories");
@@ -283,7 +282,7 @@ function renderProducts(category, brand) {
 
         const price = document.createElement("p"); // Создаём цену
         price.classList.add("price"); // Добавляем класс
-        price.textContent = `Цена: ${formatPrice(product.price)}`; // Устанавливаем текст цены
+        price.textContent = `Цена: ${formatPrice(product.price)} руб.`; // Устанавливаем текст цены
 
         const quantityInput = document.createElement("input"); // Поле для ввода количества
         quantityInput.type = "number";
@@ -403,7 +402,7 @@ function renderCartItems() {
 
         // Отображаем информацию о товаре (название, описание, цена, количество) и крестик для удаления
         cartItem.innerHTML = `
-            <span>${item.name} - ${item.price} руб. x ${item.quantity} = ${item.price * item.quantity} руб.</span>
+            <span>${item.name} - ${formatPrice(item.price)} руб. x ${item.quantity} = ${formatPrice(item.price * item.quantity)} руб.</span>
             <p>${item.description}</p>
             <input type="number" class="cart-quantity" value="${item.quantity}" min="1" max="${item.stock}" data-index="${index}">
             <span class="remove-item" data-index="${index}">&times;</span>
@@ -451,7 +450,7 @@ function renderCartItems() {
         });
     });
 
-    document.getElementById("cart-total").textContent = `Общая сумма: ${total} руб.`; // Отображаем общую сумму
+    document.getElementById("cart-total").textContent = `Общая сумма: ${formatPrice(total)} руб.`; // Отображаем общую сумму
 }
 
 console.log(cart);
@@ -460,8 +459,6 @@ console.log(cart);
 document.getElementById("close-cart").addEventListener("click", () => {
     document.getElementById("cart-modal").style.display = "none"; // Скрываем корзину
 });
-
-
 
 let userChatId = null;
 let tgUsername = "Не указан"; // Значение по умолчанию
@@ -505,10 +502,10 @@ document.getElementById("pickup-form").addEventListener("submit", async (e) => {
         items: cart.map(item => ({
             name: item.name,
             description: item.description,
-            price: ${formatPrice(item.price)},
+            price: formatPrice(item.price),
             quantity: item.quantity, // Добавляем количество
         })),
-        ${formatPrice(total)}, // Общая сумма заказа
+        total: formatPrice(total), // Общая сумма заказа
         userChatId,
     };
 
