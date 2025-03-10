@@ -333,12 +333,12 @@ function addToCart(product, quantity) {
     cart.push({
         name: product.name,
         description: product.description,
-        price: ${formatPrice(product.price),
+        price: product.price,
         quantity: quantity,
-        stock: product.stock, // Сохраняем stock
+            stock: product.stock, // Сохраняем stock
     });
-    saveCart(); // Сохраняем корзину
-    renderCartButton(); // Обновляем кнопку корзины
+saveCart(); // Сохраняем корзину
+renderCartButton(); // Обновляем кнопку корзины
 }
 
 // Рендер кнопки корзины
@@ -510,7 +510,7 @@ document.getElementById("pickup-form").addEventListener("submit", async (e) => {
     };
 
     console.log('Данные заказа:', orderData);
-    
+
     try {
         // Отправляем данные на сервер
         const response = await fetch('https://tabachoook.ru/order', {
