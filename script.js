@@ -54,17 +54,10 @@ function toggleProductList() {
 // Добавьте обработчик события для кнопки
 document.getElementById("toggle-product-list").addEventListener("click", toggleProductList);
 
-// Функция для получения актуальных данных с сервера
-async function fetchProducts() {
-    const response = await fetch(Fetch_URL); // Запрос к серверу
-    const data = await response.json();
-    products = data; // Обновляем локальные данные
-}
-
 // Обработка формы с предварительным обновлением данных
 document.getElementById("product-form").addEventListener("submit", async (e) => {
     e.preventDefault();
-    await fetchProducts(); // Обновляем данные перед выполнением действий
+    await loadProducts(); // Обновляем данные перед выполнением действий
 
     const id = document.getElementById("product-id").value || Date.now(); // Используем существующий ID или создаем новый
     const name = document.getElementById("product-name").value;
@@ -92,14 +85,16 @@ document.getElementById("product-form").addEventListener("submit", async (e) => 
             ...products[category][existingProductIndex],
             ...updatedProduct,
         };
+        alert("Обновление товара!");
     } else {
         // Если это новый товар, добавляем его
         const newProduct = { id: Number(id), name, brand, description, price, image, stock, category };
         products[category].push(newProduct);
+        alert("Новый товар!");
     }
 
     renderProductList(); // Рендерим список товаров
-    renderProducts(category); // Обновляем отображение товаров
+    renderProducts(category, brand); // Обновляем отображение товаров
     document.getElementById("product-form").reset(); // Очищаем форму
     saveProducts(); // Сохраняем данные
 });
@@ -171,9 +166,6 @@ function editProduct(category, id) {
         document.getElementById("product-category").value = category;
     }
 }
-
-
-
 
 // Удаление товара
 function deleteProduct(category, id) {
