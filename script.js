@@ -186,7 +186,7 @@ function deleteProduct(category, id) {
 // Сохранение данных
 async function saveProducts() {
     try {
-        const response = await fetch('https://tabachoook.ru/api/products', {
+        const response = await fetch('https://tabachoook.ru/api/products/update', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -203,6 +203,7 @@ async function saveProducts() {
         console.error('Ошибка:', error);
     }
 }
+
 // Загрузка данных
 async function loadProducts() {
     try {
@@ -226,6 +227,7 @@ async function loadProducts() {
         console.error('Ошибка:', error);
     }
 }
+
 
 // Рендер категорий
 function renderCategories() {
