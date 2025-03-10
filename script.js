@@ -203,17 +203,24 @@ async function saveProducts() {
         console.error('Ошибка:', error);
     }
 }
-
 // Загрузка данных
 async function loadProducts() {
     try {
-        const response = await fetch('https://tabachoook.ru/api/products');
+        const response = await fetch('https://tabachoook.ru/api/products', {
+            method: 'POST', // Используем POST вместо GET
+            headers: {
+                'Content-Type': 'application/json', // Указываем тип содержимого
+            },
+            body: JSON.stringify({}), // Пустое тело запроса (или можно передать параметры, если нужно)
+        });
+
         if (response.ok) {
-            products = await response.json(); // Обновляем глобальный объект products
+            const data = await response.json(); // Получаем данные
+            products = data; // Обновляем глобальный объект products
             renderProductList(); // Рендерим список товаров
-            console.log('Товары загружены с сервера');
+            console.log('Товары загружены с сервера:', data);
         } else {
-            console.error('Ошибка при загрузке товаров');
+            console.error('Ошибка при загрузке товаров:', response.status, response.statusText);
         }
     } catch (error) {
         console.error('Ошибка:', error);
