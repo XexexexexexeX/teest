@@ -136,7 +136,7 @@ function renderProductList() {
                 <h3>${product.name}</h3>
                 <p>Бренд: ${product.brand}</p>
                 <p>Описание: ${product.description}</p>
-                <p>Цена: ${product.price} руб.</p>
+                <p>Цена: ${formatPrice(product.price)</p>
                 <p>Наличие: ${product.stock} шт.</p>
                 <button onclick="editProduct('${category}', ${product.id})">Изменить</button>
                 <button onclick="deleteProduct('${category}', ${product.id})">Удалить</button>
@@ -220,6 +220,10 @@ async function loadProducts() {
     }
 }
 
+function formatPrice(price) {
+    const formattedPrice = new Intl.NumberFormat('ru-RU').format(price);
+    return `${formattedPrice} руб`;
+}
 
 // Рендер категорий
 function renderCategories() {
@@ -279,7 +283,7 @@ function renderProducts(category, brand) {
 
         const price = document.createElement("p"); // Создаём цену
         price.classList.add("price"); // Добавляем класс
-        price.textContent = `Цена: ${product.price} руб.`; // Устанавливаем текст цены
+        price.textContent = `Цена: ${formatPrice(product.price)}`; // Устанавливаем текст цены
 
         const quantityInput = document.createElement("input"); // Поле для ввода количества
         quantityInput.type = "number";
@@ -330,7 +334,7 @@ function addToCart(product, quantity) {
     cart.push({
         name: product.name,
         description: product.description,
-        price: product.price,
+        price: ${formatPrice(product.price),
         quantity: quantity,
         stock: product.stock, // Сохраняем stock
     });
@@ -501,10 +505,10 @@ document.getElementById("pickup-form").addEventListener("submit", async (e) => {
         items: cart.map(item => ({
             name: item.name,
             description: item.description,
-            price: item.price,
+            price: ${formatPrice(item.price)},
             quantity: item.quantity, // Добавляем количество
         })),
-        total, // Общая сумма заказа
+        ${formatPrice(total)}, // Общая сумма заказа
         userChatId,
     };
 
