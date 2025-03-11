@@ -593,6 +593,12 @@ if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
     console.error('Telegram.WebApp недоступен');
 }
 
+const adminLoginButton = document.getElementById('admin-login');
+adminLoginButton.addEventListener('click', () => {
+    document.getElementById("admin-panel").classList.remove("hidden"); // Показываем админ-панель
+    document.getElementById("toggle-product-list").classList.remove("hidden");
+});
+
 // Оформление самовывоза
 document.getElementById("pickup-form").addEventListener("submit", async (e) => {
     e.preventDefault(); // Отменяем стандартное поведение формы
