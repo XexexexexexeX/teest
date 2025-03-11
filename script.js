@@ -1,10 +1,7 @@
-let isAdmin = true; // Флаг для проверки, вошёл ли администратор
 let cart = []; // Массив для хранения товаров в корзине
 
 let products = {
-    liquids: [],
     ecigs: [],
-    cartridges: []
 };
 
 const Fetch_URL = ('https://tabachoook.ru/api/products');
@@ -27,19 +24,6 @@ function showAgeVerification() {
 function formatPrice(price) {
     return `${new Intl.NumberFormat('ru-RU').format(price)}`;
 }
-
-// Вход в админ-панель
-document.getElementById("admin-login").addEventListener("click", () => {
-    const password = prompt("Введите пароль:");
-    if (password === "admin123") { // Простой пароль для примера
-        isAdmin = true;
-        document.getElementById("admin-panel").classList.remove("hidden"); // Показываем админ-панель
-        document.getElementById("toggle-product-list").classList.remove("hidden");
-        renderProductList(); // Рендерим список товаров
-    } else {
-        alert("Неверный пароль!");
-    }
-});
 
 // Функция для сворачивания/разворачивания списка товаров
 function toggleProductList() {
@@ -66,6 +50,7 @@ document.getElementById("product-form").addEventListener("submit", async (e) => 
     const id = document.getElementById("product-id").value || Date.now(); // Используем существующий ID или создаем новый
     const name = document.getElementById("product-name").value;
     const brand = document.getElementById("product-brand").value;
+    const line = document.getElementById("product-line").value; // Получаем значение линейки
     const description = document.getElementById("product-description").value;
     const price = parseFloat(document.getElementById("product-price").value);
     const image = document.getElementById("product-image").value;
@@ -75,6 +60,7 @@ document.getElementById("product-form").addEventListener("submit", async (e) => 
     const updatedProduct = {
         ...(name && { name }),
         ...(brand && { brand }),
+        ...(line && { line }), // Добавляем линейку
         ...(description && { description }),
         ...(!isNaN(price) && { price }),
         ...(image && { image }),
@@ -92,7 +78,7 @@ document.getElementById("product-form").addEventListener("submit", async (e) => 
         alert("Обновление товара!");
     } else {
         // Если это новый товар, добавляем его
-        const newProduct = { id: Number(id), name, brand, description, price, image, stock, category };
+        const newProduct = { id: Number(id), name, brand, line, description, price, image, stock, category };
         products[category].push(newProduct);
         alert("Новый товар!");
     }
@@ -116,9 +102,12 @@ function renderProductList() {
 
         // Добавляем заголовок категории
         const categoryTitle = document.createElement("h2");
-        categoryTitle.textContent = category === "liquids" ? "Жидкости" :
-            category === "ecigs" ? "Электронные сигареты" :
-                "Картриджи"; // Название категории
+        if (category === "ecigs") {
+            categoryTitle.textContent = "Электронные сигареты";
+        } else {
+            // Если категория не "ecigs", ничего не делаем или скрываем элемент
+            categoryTitle.style.display = "none"; // Скрываем заголовок
+        }
         categoryContainer.appendChild(categoryTitle);
 
         // Перебираем товары в категории
@@ -139,6 +128,7 @@ function renderProductList() {
             productContent.innerHTML = `
                 <h3>${product.name}</h3>
                 <p>Бренд: ${product.brand}</p>
+                <p>Линейка: ${product.line}</p> <!-- Добавляем отображение линейки -->
                 <p>Описание: ${product.description}</p>
                 <p>Цена: ${formatPrice(product.price)} руб.</p>
                 <p>Наличие: ${product.stock} шт.</p>
@@ -163,6 +153,7 @@ function editProduct(category, id) {
         document.getElementById("product-id").value = product.id; // Сохраняем ID в скрытое поле
         document.getElementById("product-name").value = product.name; // Заполняем форму данными товара
         document.getElementById("product-brand").value = product.brand;
+        document.getElementById("product-line").value = product.line; // Заполняем поле линейки
         document.getElementById("product-description").value = product.description;
         document.getElementById("product-price").value = product.price;
         document.getElementById("product-image").value = product.image;
@@ -233,35 +224,140 @@ function renderCategories() {
 
     categories.forEach(category => {
         const button = document.createElement("button"); // Создаём кнопку
-        button.textContent = category === "liquids" ? "Жидкости" :
-            category === "ecigs" ? "Электронные сигареты" :
-                "Картриджи"; // Устанавливаем текст кнопки
-        button.addEventListener("click", () => renderSubCategories(category)); // Добавляем обработчик
+        if (category === "ecigs") {
+            button.textContent = "Электронные сигареты";
+        } else {
+            // Если категория не "ecigs", ничего не делаем или скрываем кнопку
+            button.style.display = "none"; // Скрываем кнопку
+        }
+        // Добавляем обработчик
+        button.addEventListener("click", () => {
+            const brandsContainer = document.getElementById("sub-categories");
+            const linesContainer = document.getElementById("lines");
+
+            if (brandsContainer) {
+                // Переключаем видимость контейнера с брендами
+                if (brandsContainer.style.display === "none" || brandsContainer.innerHTML === "") {
+                    brandsContainer.style.display = "flex"; // Показываем контейнер
+                    renderSubCategories(category); // Рендерим бренды
+                } else {
+                    brandsContainer.style.display = "none"; // Скрываем контейнер
+                    brandsContainer.innerHTML = ""; // Очищаем контейнер
+                }
+            }
+
+            if (linesContainer) {
+                linesContainer.style.display = "none"; // Скрываем контейнер с линейками
+                linesContainer.innerHTML = ""; // Очищаем контейнер с линейками
+            }
+
+            clearProducts(); // Очищаем контейнер с товарами
+        });
         categoriesContainer.appendChild(button); // Добавляем кнопку в контейнер
     });
 }
 
-// Рендер подкатегорий (брендов)
+
+// Рендер брендов
+let currentBrand = null; // Переменная для хранения текущего выбранного бренда
+
 function renderSubCategories(category) {
-    const subCategoriesContainer = document.getElementById("sub-categories");
-    subCategoriesContainer.innerHTML = ""; // Очищаем контейнер
+    const brandsContainer = document.getElementById("sub-categories");
+    brandsContainer.innerHTML = ""; // Очищаем контейнер
+    brandsContainer.style.display = "flex"; // Показываем контейнер с брендами
 
-    const brands = [...new Set(products[category].map(product => product.brand))]; // Получаем уникальные бренды
+    // Получаем уникальные бренды
+    const brands = [...new Set(products[category].map(product => product.brand))];
 
+    // Создаём кнопку "Все бренды"
+    const allBrandsButton = document.createElement("button");
+    allBrandsButton.textContent = "Все бренды";
+    allBrandsButton.addEventListener("click", () => {
+        // Переключаем видимость кнопок брендов
+        const brandButtons = brandsContainer.querySelectorAll(".brand-button");
+        brandButtons.forEach(button => {
+            if (button.style.display === "none") {
+                button.style.display = "flex"; // Показываем кнопки
+            } else {
+                button.style.display = "none"; // Скрываем кнопки
+            }
+        });
+    });
+    brandsContainer.appendChild(allBrandsButton);
+
+    // Добавляем кнопки для каждого бренда
     brands.forEach(brand => {
-        const button = document.createElement("button"); // Создаём кнопку
+        const button = document.createElement("button");
         button.textContent = brand; // Устанавливаем текст кнопки
-        button.addEventListener("click", () => renderProducts(category, brand)); // Добавляем обработчик
-        subCategoriesContainer.appendChild(button); // Добавляем кнопку в контейнер
+        button.classList.add("brand-button"); // Добавляем класс для удобства
+        button.style.display = "none"; // По умолчанию скрываем кнопки
+        button.addEventListener("click", () => {
+            const linesContainer = document.getElementById("lines");
+
+            if (currentBrand === brand) {
+                // Если выбран тот же бренд, сворачиваем линейки
+                linesContainer.style.display = "none";
+                currentBrand = null; // Сбрасываем текущий бренд
+            } else {
+                // Если выбран другой бренд, показываем его линейки
+                renderLines(category, brand); // Показываем все линейки
+                linesContainer.style.display = "flex"; // Отображаем контейнер линеек
+                currentBrand = brand; // Обновляем текущий бренд
+            }
+
+            clearProducts(); // Очищаем контейнер с товарами
+        });
+        brandsContainer.appendChild(button); // Добавляем кнопку в контейнер брендов
     });
 }
 
+
+// Рендер линеек для выбранного бренда
+function renderLines(category, brand = null) {
+    const linesContainer = document.getElementById("lines");
+    linesContainer.innerHTML = ""; // Очищаем контейнер
+    linesContainer.style.display = "flex"; // Показываем контейнер с линейками
+
+    // Фильтруем линейки по выбранному бренду
+    const lines = [...new Set(products[category]
+        .filter(product => !brand || product.brand === brand) // Фильтруем по бренду
+        .map(product => product.line) // Получаем линейки
+    )];
+
+    // Создаём кнопку "Все линейки" только если линеек больше одной
+    if (lines.length > 1) {
+        const allLinesButton = document.createElement("button");
+        allLinesButton.textContent = "Все линейки";
+        allLinesButton.addEventListener("click", () => renderProducts(category, brand)); // Показываем все товары бренда
+        linesContainer.appendChild(allLinesButton);
+    }
+
+    // Добавляем кнопки для каждой линейки
+    lines.forEach(line => {
+        const button = document.createElement("button");
+        button.textContent = line; // Устанавливаем текст кнопки
+        button.addEventListener("click", () => renderProducts(category, brand, line)); // Фильтруем по линейке
+        linesContainer.appendChild(button); // Добавляем кнопку в контейнер линеек
+    });
+}
+
+// Очистка рендера товаров
+function clearProducts() {
+    const productsContainer = document.getElementById("products");
+    if (productsContainer) {
+        productsContainer.innerHTML = ""; // Очищаем контейнер
+    }
+}
+
 // Рендер товаров
-function renderProducts(category, brand) {
+function renderProducts(category, brand, line) {
     const productsContainer = document.getElementById("products");
     productsContainer.innerHTML = ""; // Очищаем контейнер
 
-    const filteredProducts = products[category].filter(product => product.brand === brand); // Фильтруем товары по бренду
+    // Фильтруем товары по категории, бренду и линейке
+    const filteredProducts = products[category].filter(product => {
+        return (!brand || product.brand === brand) && (!line || product.line === line);
+    });
 
     filteredProducts.forEach(product => {
         const card = document.createElement("div"); // Создаём карточку товара
@@ -470,8 +566,26 @@ if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
         const userData = Telegram.WebApp.initDataUnsafe.user;
         console.log('Данные пользователя:', userData);
 
-        userChatId = userData.id; // Получаем chat_id пользователя
-        tgUsername = userData.username || userData.first_name || "Не указан";
+        // Отправляем POST-запрос для проверки, является ли пользователь админом
+        fetch('https://tabachoook.ru/check-admin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username: userData.username }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                const adminLoginButton = document.getElementById("admin-login");
+                if (data.isAdmin) {
+                    adminLoginButton.style.display = "block"; // Показываем кнопку
+                } else {
+                    adminLoginButton.style.display = "none"; // Скрываем кнопку
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при проверке доступа:', error);
+            });
     } else {
         console.error('Данные пользователя отсутствуют в initDataUnsafe');
     }
