@@ -594,9 +594,12 @@ if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
 }
 
 const adminLoginButton = document.getElementById('admin-login');
+
 adminLoginButton.addEventListener('click', () => {
-    document.getElementById("admin-panel").classList.remove("hidden"); // Показываем админ-панель
-    document.getElementById("toggle-product-list").classList.remove("hidden");
+    // Переключаем видимость админ-панели
+    document.getElementById("admin-panel").classList.toggle("hidden");
+    // Переключаем видимость списка товаров (если нужно)
+    document.getElementById("toggle-product-list").classList.toggle("hidden");
 });
 
 // Оформление самовывоза
