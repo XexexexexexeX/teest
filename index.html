@@ -29,7 +29,7 @@
     </div>
 
     <!-- Кнопка для входа в админ-панель -->
-    <admin-login id="admin-login"></admin-login>
+    <admin-login id="admin-login" style="display: none;">Войти в админ-панель</admin-login>
 
     <!-- Админ-панель (скрыта по умолчанию) -->
     <div id="admin-panel" class="admin-panel hidden">
@@ -38,20 +38,19 @@
             <input type="hidden" id="product-id" /> <!-- Скрытое поле для ID -->
             <input type="text" id="product-name" placeholder="Название товара" required>
             <input type="text" id="product-brand" placeholder="Бренд" required>
+            <input type="text" id="product-line" placeholder="Линейка">
             <input type="text" id="product-description" placeholder="Описание" required>
             <input type="number" id="product-price" placeholder="Цена" required>
             <input type="text" id="product-image" placeholder="Ссылка на изображение" required>
             <input type="number" id="product-stock" placeholder="Количество на складе" required>
             <select id="product-category">
-                <option value="liquids">Жидкости</option>
                 <option value="ecigs">Электронные сигареты</option>
-                <option value="cartridges">Картриджи</option>
             </select>
-            <button id="add/edd">Добавить/Изменить товар</button>
+            <button id="add/edd">Сохранить товар</button>
         </form>
         <div id="product-list"></div>
         <div id="toggle-product-list" class="hidden">
-            <span></span> <!-- Иконка или текст -->
+            <span></span> 
         </div>
     </div>
 
