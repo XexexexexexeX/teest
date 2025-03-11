@@ -62,6 +62,42 @@ h1 {
             margin-right: 0;
         }
 
+/* Стили для контейнера линеек */
+#lines {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px;
+    margin: 0;
+    box-sizing: border-box;
+    scroll-padding: 16px;
+    margin-bottom: auto;
+}
+
+/* Стили для кнопок линеек */
+#lines button {
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 14px;
+    border: 1px solid #5b5656;
+    border-radius: 5px;
+    background-color: #444; /* Другой цвет для отличия от подкатегорий */
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Убираем отступ у последней кнопки */
+#lines button:last-child {
+    margin-right: 0;
+}
+
 button {
     padding: 10px 20px;
     border: 1px solid #5b5656;
@@ -162,8 +198,54 @@ button {
 }
 
 admin-login {
-    background-color: none;
+    display: inline-block;
     padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff; /* Белый текст */
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 25px; /* Закругленные углы */
+    background: linear-gradient(45deg, #ffd700, #c0c0c0); /* Золотисто-серебряный градиент */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Тень для объема */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Плавные переходы */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Эффект при наведении */
+admin-login:hover {
+    background: linear-gradient(45deg, #c0c0c0, #ffd700); /* Инвертируем градиент */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4); /* Увеличиваем тень */
+    transform: translateY(-2px); /* Легкий подъем */
+}
+
+/* Эффект при нажатии */
+admin-login:active {
+    transform: translateY(0); /* Возвращаем на место */
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3); /* Уменьшаем тень */
+}
+
+/* Дополнительный эффект с псевдоэлементом */
+admin-login::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0)); /* Световое пятно */
+    transform: translate(-50%, -50%) rotate(45deg);
+    transition: all 0.5s ease;
+    opacity: 0;
+}
+
+/* Анимация при наведении */
+admin-login:hover::before {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(0deg);
 }
 
 .category-container {
