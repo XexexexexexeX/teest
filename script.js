@@ -559,15 +559,14 @@ document.getElementById("close-cart").addEventListener("click", () => {
 let userChatId = null;
 let tgUsername = "Не указан"; // Значение по умолчанию
 
-userChatId = userData.id; // Получаем chat_id пользователя
-tgUsername = userData.username || userData.first_name || "Не указан";
-
 if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
     Telegram.WebApp.ready(); // Инициализация WebApp
 
     if (Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
         const userData = Telegram.WebApp.initDataUnsafe.user;
-        console.log('Данные пользователя:', userData);
+
+        userChatId = userData.id; // Получаем chat_id пользователя
+        tgUsername = userData.username || userData.first_name || "Не указан";
 
         // Отправляем POST-запрос для проверки, является ли пользователь админом
         fetch('https://tabachoook.ru/check-admin', {
