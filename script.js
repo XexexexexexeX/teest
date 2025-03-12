@@ -559,6 +559,9 @@ document.getElementById("close-cart").addEventListener("click", () => {
 let userChatId = null;
 let tgUsername = "Не указан"; // Значение по умолчанию
 
+userChatId = userData.id; // Получаем chat_id пользователя
+tgUsername = userData.username || userData.first_name || "Не указан";
+
 if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
     Telegram.WebApp.ready(); // Инициализация WebApp
 
