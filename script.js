@@ -1,7 +1,9 @@
 let cart = []; // Массив для хранения товаров в корзине
 
 let products = {
-    ecigs: [],
+    "ecigs": [],
+    "snys":[],
+    "drinks":[],
 };
 
 const Fetch_URL = ('https://tabachoook.ru/api/products');
@@ -57,6 +59,10 @@ document.getElementById("product-form").addEventListener("submit", async (e) => 
     const stock = parseInt(document.getElementById("product-stock").value);
     const category = document.getElementById("product-category").value;
 
+    if (!products[category]) {
+        products[category] = []; // Создаём новую категорию, если её нет
+    }
+
     const updatedProduct = {
         ...(name && { name }),
         ...(brand && { brand }),
@@ -83,35 +89,52 @@ document.getElementById("product-form").addEventListener("submit", async (e) => 
         alert("Новый товар!");
     }
 
-    renderProductList(); // Рендерим список товаров
+    renderSubCategories("product-sub-categories", category);
+    renderLines("product-lines", category, brand);
+
     renderProducts(category, brand); // Обновляем отображение товаров
+    renderProductList(category, brand);
     document.getElementById("product-form").reset(); // Очищаем форму
     saveProducts(); // Сохраняем данные
 });
 
-// Рендер списка товаров в админ-панели
-function renderProductList() {
+// Рендер списка товаров в админ-панели с фильтрацией
+function renderProductList(category = null, brand = null, line = null) {
     const productList = document.getElementById("product-list");
     productList.innerHTML = ""; // Очищаем список
 
+    // Если категория не указана, используем все категории
+    const categoriesToRender = category ? [category] : Object.keys(products);
+
     // Перебираем категории
-    Object.keys(products).forEach(category => {
+    categoriesToRender.forEach(currentCategory => {
+        // Фильтруем товары по категории, бренду и линейке
+        const filteredProducts = products[currentCategory].filter(product => {
+            return (!brand || product.brand === brand) && (!line || product.line === line);
+        });
+
+        // Если в категории нет товаров после фильтрации, пропускаем её
+        if (filteredProducts.length === 0) return;
+
         // Создаем контейнер для категории
         const categoryContainer = document.createElement("div");
         categoryContainer.classList.add("category-container");
 
         // Добавляем заголовок категории
         const categoryTitle = document.createElement("h2");
-        if (category === "ecigs") {
+        if (currentCategory === "ecigs") {
             categoryTitle.textContent = "Электронные сигареты";
+        } else if (currentCategory === "snys") {
+            categoryTitle.textContent = "Снюс";
+        } else if (currentCategory === "drinks") {
+            categoryTitle.textContent = "Напитки";
         } else {
-            // Если категория не "ecigs", ничего не делаем или скрываем элемент
-            categoryTitle.style.display = "none"; // Скрываем заголовок
+            categoryTitle.textContent = currentCategory; // Название категории по умолчанию
         }
         categoryContainer.appendChild(categoryTitle);
 
-        // Перебираем товары в категории
-        products[category].forEach(product => {
+        // Перебираем отфильтрованные товары в категории
+        filteredProducts.forEach(product => {
             const productItem = document.createElement("div");
             productItem.classList.add("product-item");
 
@@ -128,12 +151,12 @@ function renderProductList() {
             productContent.innerHTML = `
                 <h3>${product.name}</h3>
                 <p>Бренд: ${product.brand}</p>
-                <p>Линейка: ${product.line}</p> <!-- Добавляем отображение линейки -->
+                <p>Линейка: ${product.line}</p>
                 <p>Описание: ${product.description}</p>
                 <p>Цена: ${formatPrice(product.price)} руб.</p>
                 <p>Наличие: ${product.stock} шт.</p>
-                <button onclick="editProduct('${category}', ${product.id})">Изменить</button>
-                <button onclick="deleteProduct('${category}', ${product.id})">Удалить</button>
+                <button onclick="editProduct('${currentCategory}', ${product.id})">Изменить</button>
+                <button onclick="deleteProduct('${currentCategory}', ${product.id})">Удалить</button>
             `;
 
             // Добавляем содержимое и картинку в карточку
@@ -165,8 +188,8 @@ function editProduct(category, id) {
 // Удаление товара
 function deleteProduct(category, id) {
     products[category] = products[category].filter(p => p.id !== id); // Удаляем товар из массива
-    renderProductList(); // Рендерим список товаров
     renderProducts(category); // Обновляем отображение товаров
+    renderProductList(category);
     saveProducts(); // Сохраняем данные
 }
 
@@ -205,7 +228,6 @@ async function loadProducts() {
         if (response.ok) {
             const data = await response.json(); // Получаем данные
             products = data; // Обновляем глобальный объект products
-            renderProductList(); // Рендерим список товаров
             console.log('Товары загружены с сервера:', data);
         } else {
             console.error('Ошибка при загрузке товаров:', response.status, response.statusText);
@@ -215,54 +237,95 @@ async function loadProducts() {
     }
 }
 
-// Рендер категорий
+let currentCategory = null; // Переменная для хранения текущей выбранной категории
+
 function renderCategories() {
     const categoriesContainer = document.getElementById("categories");
-    categoriesContainer.innerHTML = ""; // Очищаем контейнер
+    const productcategoriesContainer = document.getElementById("product-categories");
+
+    // Проверяем, что оба контейнера существуют
+    if (!categoriesContainer || !productcategoriesContainer) {
+        console.error("Один из контейнеров не найден!");
+        return;
+    }
+
+    // Очищаем оба контейнера
+    categoriesContainer.innerHTML = "";
+    productcategoriesContainer.innerHTML = "";
 
     const categories = Object.keys(products); // Получаем список категорий
 
     categories.forEach(category => {
-        const button = document.createElement("button"); // Создаём кнопку
-        if (category === "ecigs") {
-            button.textContent = "Электронные сигареты";
-        } else {
-            // Если категория не "ecigs", ничего не делаем или скрываем кнопку
-            button.style.display = "none"; // Скрываем кнопку
-        }
-        // Добавляем обработчик
-        button.addEventListener("click", () => {
-            const brandsContainer = document.getElementById("sub-categories");
-            const linesContainer = document.getElementById("lines");
+        // Создаём кнопку для categoriesContainer
+        const button1 = createCategoryButton(category);
+        categoriesContainer.appendChild(button1);
 
-            if (brandsContainer) {
-                // Переключаем видимость контейнера с брендами
-                if (brandsContainer.style.display === "none" || brandsContainer.innerHTML === "") {
-                    brandsContainer.style.display = "flex"; // Показываем контейнер
-                    renderSubCategories(category); // Рендерим бренды
-                } else {
-                    brandsContainer.style.display = "none"; // Скрываем контейнер
-                    brandsContainer.innerHTML = ""; // Очищаем контейнер
-                }
-            }
-
-            if (linesContainer) {
-                linesContainer.style.display = "none"; // Скрываем контейнер с линейками
-                linesContainer.innerHTML = ""; // Очищаем контейнер с линейками
-            }
-
-            clearProducts(); // Очищаем контейнер с товарами
-        });
-        categoriesContainer.appendChild(button); // Добавляем кнопку в контейнер
+        // Создаём кнопку для productcategoriesContainer
+        const button2 = createCategoryButton(category);
+        productcategoriesContainer.appendChild(button2);
     });
 }
 
+// Функция для создания кнопки категории
+function createCategoryButton(category) {
+    const button = document.createElement("button"); // Создаём кнопку
+    if (category === "ecigs") {
+        button.textContent = "Электронные сигареты";
+    } else if (category === "snys") {
+        button.textContent = "Снюс";
+    } else if (category === "drinks") {
+        button.textContent = "Напитки";
+    } else {
+        button.textContent = category; // Отображаем название категории по умолчанию
+    }
+
+    // Добавляем обработчик для кнопки
+    button.addEventListener("click", () => {
+        const brandsContainer = document.getElementById("sub-categories");
+        const linesContainer = document.getElementById("lines");
+
+        // Всегда разворачиваем бренды при клике на категорию
+        if (brandsContainer) {
+            brandsContainer.style.display = "flex"; // Показываем контейнер с брендами
+            renderSubCategories("sub-categories", category); // Рендерим все бренды
+        }
+        if (linesContainer) {
+            linesContainer.style.display = "none"; // Скрываем контейнер с линейками
+            linesContainer.innerHTML = "";
+        }
+
+        currentCategory = category; // Обновляем текущую категорию
+        clearProducts(); // Очищаем контейнер с товарами
+    });
+
+    // Добавляем обработчик для productcategoriesContainer
+    button.addEventListener("click", () => {
+        const brandsContainer = document.getElementById("product-sub-categories");
+        const linesContainer = document.getElementById("product-lines");
+
+        // Всегда разворачиваем бренды при клике на категорию
+        if (brandsContainer) {
+            brandsContainer.style.display = "flex"; // Показываем контейнер с брендами
+            renderSubCategories("product-sub-categories", category); // Рендерим все бренды
+        }
+        if (linesContainer) {
+            linesContainer.style.display = "none"; // Скрываем контейнер с линейками
+            linesContainer.innerHTML = "";
+        }
+
+        currentCategory = category; // Обновляем текущую категорию
+        clearProducts(); // Очищаем контейнер с товарами
+    });
+
+    return button; // Возвращаем созданную кнопку
+}
 
 // Рендер брендов
 let currentBrand = null; // Переменная для хранения текущего выбранного бренда
+let productcurrentBrand = null; // Переменная для хранения текущего выбранного бренда
 
-function renderSubCategories(category) {
-    const brandsContainer = document.getElementById("sub-categories");
+function renderSubCategories(containerId ,category) {
+    const brandsContainer = document.getElementById(containerId);
     brandsContainer.innerHTML = ""; // Очищаем контейнер
     brandsContainer.style.display = "flex"; // Показываем контейнер с брендами
 
@@ -270,27 +333,30 @@ function renderSubCategories(category) {
     const brands = [...new Set(products[category].map(product => product.brand))];
 
     // Создаём кнопку "Все бренды"
-    const allBrandsButton = document.createElement("button");
-    allBrandsButton.textContent = "Все бренды";
-    allBrandsButton.addEventListener("click", () => {
-        // Переключаем видимость кнопок брендов
-        const brandButtons = brandsContainer.querySelectorAll(".brand-button");
-        brandButtons.forEach(button => {
-            if (button.style.display === "none") {
-                button.style.display = "flex"; // Показываем кнопки
-            } else {
-                button.style.display = "none"; // Скрываем кнопки
-            }
+    // Если категория не "Напитки", добавляем кнопку "Все бренды"
+    if (category !== "drinks" && category !== "snys") {
+        const allBrandsButton = document.createElement("button");
+        allBrandsButton.textContent = "Все бренды";
+        allBrandsButton.addEventListener("click", () => {
+            // Переключаем видимость кнопок брендов
+            const brandButtons = brandsContainer.querySelectorAll(".brand-button");
+            brandButtons.forEach(button => {
+                if (button.style.display === "none") {
+                    button.style.display = "flex"; // Показываем кнопки
+                } else {
+                    button.style.display = "none"; // Скрываем кнопки
+                }
+            });
         });
-    });
-    brandsContainer.appendChild(allBrandsButton);
+        brandsContainer.appendChild(allBrandsButton);
+    }
 
     // Добавляем кнопки для каждого бренда
     brands.forEach(brand => {
         const button = document.createElement("button");
         button.textContent = brand; // Устанавливаем текст кнопки
         button.classList.add("brand-button"); // Добавляем класс для удобства
-        button.style.display = "none"; // По умолчанию скрываем кнопки
+        button.style.display = "flex"; // По умолчанию показываем кнопки /////////////////////////////////////////////////////////////// Изначально нужно было скрыть
         button.addEventListener("click", () => {
             const linesContainer = document.getElementById("lines");
 
@@ -300,21 +366,39 @@ function renderSubCategories(category) {
                 currentBrand = null; // Сбрасываем текущий бренд
             } else {
                 // Если выбран другой бренд, показываем его линейки
-                renderLines(category, brand); // Показываем все линейки
+                renderLines("lines", category, brand); // Показываем все линейки
                 linesContainer.style.display = "flex"; // Отображаем контейнер линеек
                 currentBrand = brand; // Обновляем текущий бренд
             }
 
             clearProducts(); // Очищаем контейнер с товарами
         });
+
+        button.addEventListener("click", () => {
+            const linesContainer = document.getElementById("product-lines");
+
+            if (productcurrentBrand === brand) {
+                // Если выбран тот же бренд, сворачиваем линейки
+                linesContainer.style.display = "none";
+                productcurrentBrand = null; // Сбрасываем текущий бренд
+            } else {
+                // Если выбран другой бренд, показываем его линейки
+                renderLines("product-lines", category, brand); // Показываем все линейки
+                linesContainer.style.display = "flex"; // Отображаем контейнер линеек
+                productcurrentBrand = brand; // Обновляем текущий бренд
+            }
+
+            clearProducts(); // Очищаем контейнер с товарами
+        });
+
         brandsContainer.appendChild(button); // Добавляем кнопку в контейнер брендов
     });
 }
 
 
 // Рендер линеек для выбранного бренда
-function renderLines(category, brand = null) {
-    const linesContainer = document.getElementById("lines");
+function renderLines(containerId, category, brand = null) {
+    const linesContainer = document.getElementById(containerId);
     linesContainer.innerHTML = ""; // Очищаем контейнер
     linesContainer.style.display = "flex"; // Показываем контейнер с линейками
 
@@ -327,8 +411,9 @@ function renderLines(category, brand = null) {
     // Создаём кнопку "Все линейки" только если линеек больше одной
     if (lines.length > 1) {
         const allLinesButton = document.createElement("button");
-        allLinesButton.textContent = "Все линейки";
+        allLinesButton.textContent = (category === "drinks" || category === "snys") ? "Все бренды" : "Все линейки";
         allLinesButton.addEventListener("click", () => renderProducts(category, brand)); // Показываем все товары бренда
+        allLinesButton.addEventListener("click", () => renderProductList(category, brand)); // Показываем все товары бренда
         linesContainer.appendChild(allLinesButton);
     }
 
@@ -337,6 +422,7 @@ function renderLines(category, brand = null) {
         const button = document.createElement("button");
         button.textContent = line; // Устанавливаем текст кнопки
         button.addEventListener("click", () => renderProducts(category, brand, line)); // Фильтруем по линейке
+        button.addEventListener("click", () => renderProductList(category, brand, line)); // Фильтруем по линейке
         linesContainer.appendChild(button); // Добавляем кнопку в контейнер линеек
     });
 }
@@ -346,6 +432,10 @@ function clearProducts() {
     const productsContainer = document.getElementById("products");
     if (productsContainer) {
         productsContainer.innerHTML = ""; // Очищаем контейнер
+    }
+    const products_Container = document.getElementById("product-list");
+    if (products_Container) {
+        products_Container.innerHTML = ""; // Очищаем контейнер
     }
 }
 
@@ -608,13 +698,34 @@ adminLoginButton.addEventListener('click', () => {
 document.getElementById("pickup-form").addEventListener("submit", async (e) => {
     e.preventDefault(); // Отменяем стандартное поведение формы
 
+    const submitButton = document.getElementById("submit-button"); // Предположим, у кнопки есть id="submit-button"
+    const spinner = document.createElement("span"); // Создаем элемент для спиннера
+    spinner.className = "spinner"; // Добавляем класс для стилизации спиннера
+
+    // Проверяем, не заблокирована ли кнопка
+    if (submitButton.disabled) {
+        alert("Пожалуйста, подождите 3 секунды перед повторной отправкой.");
+        return;
+    }
+
+    submitButton.disabled = true; // Блокируем кнопку
+    submitButton.appendChild(spinner); // Добавляем спиннер на кнопку
+
     if (cart.length === 0) {
         alert("Ваша корзина пуста. Добавьте товары перед оформлением заказа.");
+        submitButton.disabled = false; // Разблокируем кнопку
+        spinner.remove(); // Убираем спиннер
         return; // Прерываем выполнение функции
     }
 
     const name = document.getElementById("pickup-name").value; // Имя пользователя
     const phone = document.getElementById("pickup-phone").value; // Телефон пользователя
+
+    let tgUsername = "Не указан"; // Значение по умолчанию
+
+    if (typeof Telegram !== 'undefined' && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
+        tgUsername = Telegram.WebApp.initDataUnsafe.user.username || "Не указан";
+    }
 
     // Рассчитываем общую сумму заказа
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -627,18 +738,16 @@ document.getElementById("pickup-form").addEventListener("submit", async (e) => {
         items: cart.map(item => ({
             name: item.name,
             description: item.description,
-            price: formatPrice(item.price),
+            price: item.price,
             quantity: item.quantity, // Добавляем количество
         })),
-        total: formatPrice(total), // Общая сумма заказа
+        total, // Общая сумма заказа
         userChatId,
     };
 
-    console.log('Данные заказа:', orderData);
-
     try {
         // Отправляем данные на сервер
-        const response = await fetch('https://tabachoook.ru/order', {
+        const response = await fetch('http://localhost:62000/order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -658,8 +767,15 @@ document.getElementById("pickup-form").addEventListener("submit", async (e) => {
     } catch (error) {
         console.error("Ошибка:", error);
         alert("Произошла ошибка при отправке данных.");
+    } finally {
+        // Устанавливаем задержку в 3 секунды перед разблокировкой кнопки
+        setTimeout(() => {
+            submitButton.disabled = false; // Разблокируем кнопку
+            spinner.remove(); // Убираем спиннер
+        }, 3000); // 3000 мс = 3 секунды
     }
 });
+
 
 let sortDirection = {
     price: "asc", // Направление сортировки по цене
@@ -723,13 +839,154 @@ function renderSortButtons() {
 
 // Инициализация
 document.addEventListener("DOMContentLoaded", () => {
-    showAgeVerification(); // Показываем окно подтверждения возраста
-    loadProducts(); // Загружаем товары из localStorage
-    loadCart(); // Загружаем корзину из localStorage
-    renderCategories(); // Рендерим категории
-    renderSortButtons(); // Рендерим кнопки сортировки
+    const loader = document.getElementById('loader');
+    const mainContent = document.getElementById('main-content');
+    const starsContainer = document.querySelector('.stars-container');
+    const progressElement = document.querySelector('.progress');
 
-    // Скрываем корзину при загрузке страницы
-    const cartModal = document.getElementById("cart-modal");
-    cartModal.style.display = "none";
+    // Инициализация Telegram Web App
+    Telegram.WebApp.ready();
+
+    // Создаём звёзды
+    const numStars = 40; // Количество звёзд
+    const starColors = ['#ffffff', '#aaf', '#ffa', '#f90', '#f00']; // Белый, голубой, жёлтый, оранжевый, красный
+
+    for (let i = 0; i < numStars; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+
+        // Случайное положение
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+        star.style.left = `${x}%`;
+        star.style.top = `${y}%`;
+
+        // Случайный цвет
+        const color = starColors[Math.floor(Math.random() * starColors.length)];
+        star.style.backgroundColor = color;
+        star.style.boxShadow = `0 0 5px ${color}, 0 0 10px ${color}`;
+
+        // Случайная задержка анимации
+        const delay = Math.random() * 2;
+        star.style.animationDelay = `${delay}s`;
+
+        // Случайное движение
+        const moveX = (Math.random() - 0.5) * 200; // Случайное смещение по X
+        const moveY = (Math.random() - 0.5) * 200; // Случайное смещение по Y
+        star.style.animation = `moveStar ${5 + Math.random() * 10}s linear infinite alternate`;
+
+        starsContainer.appendChild(star);
+    }
+
+    // Функция для обновления прогресса
+    function updateProgress(percent) {
+        progressElement.textContent = `${Math.round(percent)}%`; // Обновляем текст прогресса
+    }
+
+    // Плавное увеличение прогресса
+    function animateProgress(targetPercent, duration) {
+        return new Promise((resolve) => {
+            const startTime = performance.now();
+            const startPercent = parseFloat(progressElement.textContent);
+
+            function step(currentTime) {
+                const elapsedTime = currentTime - startTime;
+                const progress = Math.min(elapsedTime / duration, 1);
+                const currentPercent = startPercent + (targetPercent - startPercent) * progress;
+
+                updateProgress(currentPercent);
+
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    resolve();
+                }
+            }
+
+            requestAnimationFrame(step);
+        });
+    }
+
+    // Загрузка данных с сервера
+    async function loadProducts() {
+        try {
+            const response = await fetch('http://localhost:62000/api/products', {
+                method: 'POST', // Используем POST вместо GET
+                headers: {
+                    'Content-Type': 'application/json', // Указываем тип содержимого
+                },
+                body: JSON.stringify({}), // Пустое тело запроса (или можно передать параметры, если нужно)
+            });
+
+            if (response.ok) {
+                const data = await response.json(); // Получаем данные
+                console.log('Товары загружены с сервера:', data);
+
+                // Обновляем прогресс до 100%
+                await animateProgress(100, 1000); // Плавное увеличение до 100% за 1 секунду
+
+                // Запускаем исчезновение звёзд
+                const stars = document.querySelectorAll('.star');
+                let starsRemaining = stars.length; // Счётчик оставшихся звёзд
+
+                stars.forEach((star, index) => {
+                    setTimeout(() => {
+                        // Останавливаем анимацию движения
+                        star.style.animation = 'none';
+
+                        // Добавляем класс для исчезновения
+                        star.classList.add('fade-out');
+
+                        // Обрабатываем завершение анимации
+                        const handleAnimationEnd = () => {
+                            star.remove(); // Удаляем звезду из DOM после завершения анимации
+                            starsRemaining--; // Уменьшаем счётчик оставшихся звёзд
+
+                            // Если все звёзды исчезли, завершаем загрузку
+                            if (starsRemaining === 0) {
+                                // Плавное исчезновение загрузчика
+                                loader.style.opacity = '0';
+                                setTimeout(() => {
+                                    loader.style.display = 'none';
+                                    mainContent.classList.remove('hidden'); // Показать основной контент
+
+                                    // Вызов функций после завершения загрузки
+                                    showAgeVerification(); // Показываем окно подтверждения возраста
+                                    loadCart(); // Загружаем корзину из localStorage
+                                    renderCategories(); // Рендерим категории
+                                    renderSortButtons(); // Рендерим кнопки сортировки
+
+                                    // Скрываем корзину при загрузке страницы
+                                    const cartModal = document.getElementById("cart-modal");
+                                    cartModal.style.display = "none";
+                                }, 500); // Задержка для завершения анимации opacity
+                            }
+
+                            // Удаляем обработчик события после завершения
+                            star.removeEventListener('animationend', handleAnimationEnd);
+                        };
+
+                        // Добавляем обработчик события animationend
+                        star.addEventListener('animationend', handleAnimationEnd);
+                    }, index * 50); // Задержка для каждой звезды (50 мс между звёздами)
+                });
+            } else {
+                console.error('Ошибка при загрузке товаров:', response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+        }
+    }
+
+    // Основная функция загрузки
+    async function startLoading() {
+        // Плавное увеличение прогресса до 50% (Telegram)
+        await animateProgress(50, 1000); // 50% за 1 секунду
+
+        // Загрузка данных с сайта (оставшиеся 50%)
+        await loadProducts();
+    }
+
+    // Запускаем процесс загрузки
+    startLoading();
 });
