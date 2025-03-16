@@ -838,6 +838,7 @@ function renderSortButtons() {
 }
 
 // Инициализация
+// Инициализация
 document.addEventListener("DOMContentLoaded", () => {
     const loader = document.getElementById('loader');
     const mainContent = document.getElementById('main-content');
@@ -845,10 +846,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const progressElement = document.querySelector('.progress');
 
     // Инициализация Telegram Web App
-    Telegram.WebApp.ready();
+    try {
+        Telegram.WebApp.ready();
+    } catch (error) {
+        console.error('Ошибка при инициализации Telegram Web App:', error);
+        showError(); // Показываем ошибку
+        return; // Прекращаем выполнение
+    }
 
     // Создаём звёзды
-    const numStars = 40; // Количество звёзд
+    const numStars = 200; // Количество звёзд
     const starColors = ['#ffffff', '#aaf', '#ffa', '#f90', '#f00']; // Белый, голубой, жёлтый, оранжевый, красный
 
     for (let i = 0; i < numStars; i++) {
@@ -883,6 +890,17 @@ document.addEventListener("DOMContentLoaded", () => {
         progressElement.textContent = `${Math.round(percent)}%`; // Обновляем текст прогресса
     }
 
+    // Функция для отображения ошибки
+    function showError() {
+        progressElement.textContent = '∞'; // Показываем знак бесконечности
+        progressElement.style.color = 'red'; // Меняем цвет на красный для индикации ошибки
+
+        // Показываем сообщение об ошибке
+        setTimeout(() => {
+            alert('Произошла ошибка при загрузке. Пожалуйста, попробуйте позже.');
+        }, 1000);
+    }
+
     // Плавное увеличение прогресса
     function animateProgress(targetPercent, duration) {
         return new Promise((resolve) => {
@@ -910,7 +928,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Загрузка данных с сервера
     async function loadProducts() {
         try {
-            const response = await fetch('https://tabachoook.ru/api/products', {
+            const response = await fetch('http://localhost:62000/api/products', {
                 method: 'POST', // Используем POST вместо GET
                 headers: {
                     'Content-Type': 'application/json', // Указываем тип содержимого
@@ -972,19 +990,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             } else {
                 console.error('Ошибка при загрузке товаров:', response.status, response.statusText);
+                showError(); // Показываем ошибку
             }
         } catch (error) {
             console.error('Ошибка:', error);
+            showError(); // Показываем ошибку
         }
     }
 
     // Основная функция загрузки
     async function startLoading() {
-        // Плавное увеличение прогресса до 50% (Telegram)
-        await animateProgress(50, 1000); // 50% за 1 секунду
+        try {
+            // Плавное увеличение прогресса до 50% (Telegram)
+            await animateProgress(50, 1000); // 50% за 1 секунду
 
-        // Загрузка данных с сайта (оставшиеся 50%)
-        await loadProducts();
+            // Загрузка данных с сайта (оставшиеся 50%)
+            await loadProducts();
+        } catch (error) {
+            console.error('Ошибка при загрузке:', error);
+            showError(); // Показываем ошибку
+        }
     }
 
     // Запускаем процесс загрузки
