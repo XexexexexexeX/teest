@@ -19,7 +19,7 @@ h1 {
     color: #ffffff;
 }
 
-.categories, .sort-buttons {
+.sort-buttons {
     display: flex;
     gap: 10px;
     justify-content: center;
@@ -28,9 +28,46 @@ h1 {
     margin-right: 10px;
 }
 
+/* Стили для контейнера */
+#categories {
+    display: flex; /* Включаем flex */
+    justify-content: space-around; /* Выравниваем кнопки по левому краю */
+    align-items: center; /* Выравниваем кнопки по центру вертикально */
+    width: 100%; /* Занимает всю ширину родительского элемента */
+    overflow-x: auto; /* Горизонтальная прокрутка, если содержимое не помещается */
+    white-space: nowrap; /* Запрет переноса кнопок на новую строку */
+    padding: 10px; /* Отступы от края экрана */
+    margin: 0; /* Убираем внешние отступы */
+    box-sizing: border-box; /* Учитываем padding в общей ширине */
+    scroll-padding: 16px; /* Отступы для прокрутки */
+    margin-bottom: auto;
+}
+
+    /* Стили для кнопок */
+    #categories button {
+        display: inline-block; /* Кнопки выстраиваются в одну строку */
+        padding: 10px 15px; /* Внутренние отступы */
+        font-size: 14px;
+        border: 1px solid #5b5656;
+        border-radius: 5px;
+        background-color: #333;
+        color: #fff; /* Цвет текста */
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Плавное изменение цвета */
+        margin-right: 10px;
+        white-space: nowrap; /* Запрет переноса текста внутри кнопки */
+        flex-shrink: 0; /* Запрещаем сжатие кнопок */
+    }
+
+        /* Убираем отступ у последней кнопки */
+        #categories button:last-child {
+            margin-right: 0;
+        }
+
+/* Стили для контейнера */
 #sub-categories {
-    display: flex; 
-    justify-content: space-around; 
+    display: flex; /* Включаем flex */
+    justify-content: space-around; /* Выравниваем кнопки по левому краю */
     align-items: center; /* Выравниваем кнопки по центру вертикально */
     width: 100%; /* Занимает всю ширину родительского элемента */
     overflow-x: auto; /* Горизонтальная прокрутка, если содержимое не помещается */
@@ -57,46 +94,155 @@ h1 {
         white-space: nowrap; /* Запрет переноса текста внутри кнопки */
         flex-shrink: 0; /* Запрещаем сжатие кнопок */
     }
+
         /* Убираем отступ у последней кнопки */
         #sub-categories button:last-child {
             margin-right: 0;
         }
 
-/* Стили для контейнера линеек */
+/* Стили для контейнера */
 #lines {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-    padding: 10px;
-    margin: 0;
-    box-sizing: border-box;
-    scroll-padding: 16px;
+    display: flex; /* Включаем flex */
+    justify-content: space-around; /* Выравниваем кнопки по левому краю */
+    align-items: center; /* Выравниваем кнопки по центру вертикально */
+    width: 100%; /* Занимает всю ширину родительского элемента */
+    overflow-x: auto; /* Горизонтальная прокрутка, если содержимое не помещается */
+    white-space: nowrap; /* Запрет переноса кнопок на новую строку */
+    padding: 10px; /* Отступы от края экрана */
+    margin: 0; /* Убираем внешние отступы */
+    box-sizing: border-box; /* Учитываем padding в общей ширине */
+    scroll-padding: 16px; /* Отступы для прокрутки */
     margin-bottom: auto;
 }
 
-/* Стили для кнопок линеек */
-#lines button {
-    display: inline-block;
-    padding: 10px 15px;
-    font-size: 14px;
-    border: 1px solid #5b5656;
-    border-radius: 5px;
-    background-color: #444; /* Другой цвет для отличия от подкатегорий */
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-right: 10px;
-    white-space: nowrap;
-    flex-shrink: 0;
+    /* Стили для кнопок */
+    #lines button {
+        display: inline-block; /* Кнопки выстраиваются в одну строку */
+        padding: 10px 15px; /* Внутренние отступы */
+        font-size: 14px;
+        border: 1px solid #5b5656;
+        border-radius: 5px;
+        background-color: #333;
+        color: #fff; /* Цвет текста */
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Плавное изменение цвета */
+        margin-right: 10px;
+        white-space: nowrap; /* Запрет переноса текста внутри кнопки */
+        flex-shrink: 0; /* Запрещаем сжатие кнопок */
+    }
+
+        /* Убираем отступ у последней кнопки */
+        #lines button:last-child {
+            margin-right: 0;
+        }
+
+/* Стили для контейнера */
+#product-categories {
+    display: flex; /* Включаем flex */
+    justify-content: space-around; /* Выравниваем кнопки по левому краю */
+    align-items: center; /* Выравниваем кнопки по центру вертикально */
+    width: 100%; /* Занимает всю ширину родительского элемента */
+    overflow-x: auto; /* Горизонтальная прокрутка, если содержимое не помещается */
+    white-space: nowrap; /* Запрет переноса кнопок на новую строку */
+    padding: 10px; /* Отступы от края экрана */
+    margin: 0; /* Убираем внешние отступы */
+    box-sizing: border-box; /* Учитываем padding в общей ширине */
+    scroll-padding: 16px; /* Отступы для прокрутки */
+    margin-bottom: auto;
 }
 
-/* Убираем отступ у последней кнопки */
-#lines button:last-child {
-    margin-right: 0;
+    /* Стили для кнопок */
+    #product-categories button {
+        display: inline-block; /* Кнопки выстраиваются в одну строку */
+        padding: 10px 15px; /* Внутренние отступы */
+        font-size: 14px;
+        border: 1px solid #5b5656;
+        border-radius: 5px;
+        background-color: #333;
+        color: #fff; /* Цвет текста */
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Плавное изменение цвета */
+        margin-right: 10px;
+        white-space: nowrap; /* Запрет переноса текста внутри кнопки */
+        flex-shrink: 0; /* Запрещаем сжатие кнопок */
+    }
+
+        /* Убираем отступ у последней кнопки */
+        #product-categories button:last-child {
+            margin-right: 0;
+        }
+
+/* Стили для контейнера */
+#product-sub-categories {
+    display: flex; /* Включаем flex */
+    justify-content: space-around; /* Выравниваем кнопки по левому краю */
+    align-items: center; /* Выравниваем кнопки по центру вертикально */
+    width: 100%; /* Занимает всю ширину родительского элемента */
+    overflow-x: auto; /* Горизонтальная прокрутка, если содержимое не помещается */
+    white-space: nowrap; /* Запрет переноса кнопок на новую строку */
+    padding: 10px; /* Отступы от края экрана */
+    margin: 0; /* Убираем внешние отступы */
+    box-sizing: border-box; /* Учитываем padding в общей ширине */
+    scroll-padding: 16px; /* Отступы для прокрутки */
+    margin-bottom: auto;
 }
+
+    /* Стили для кнопок */
+    #product-sub-categories button {
+        display: inline-block; /* Кнопки выстраиваются в одну строку */
+        padding: 10px 15px; /* Внутренние отступы */
+        font-size: 14px;
+        border: 1px solid #5b5656;
+        border-radius: 5px;
+        background-color: #333;
+        color: #fff; /* Цвет текста */
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Плавное изменение цвета */
+        margin-right: 10px;
+        white-space: nowrap; /* Запрет переноса текста внутри кнопки */
+        flex-shrink: 0; /* Запрещаем сжатие кнопок */
+    }
+
+        /* Убираем отступ у последней кнопки */
+        #product-sub-categories button:last-child {
+            margin-right: 0;
+        }
+
+/* Стили для контейнера */
+#product-lines {
+    display: flex; /* Включаем flex */
+    justify-content: space-around; /* Выравниваем кнопки по левому краю */
+    align-items: center; /* Выравниваем кнопки по центру вертикально */
+    width: 100%; /* Занимает всю ширину родительского элемента */
+    overflow-x: auto; /* Горизонтальная прокрутка, если содержимое не помещается */
+    white-space: nowrap; /* Запрет переноса кнопок на новую строку */
+    padding: 10px; /* Отступы от края экрана */
+    margin: 0; /* Убираем внешние отступы */
+    box-sizing: border-box; /* Учитываем padding в общей ширине */
+    scroll-padding: 16px; /* Отступы для прокрутки */
+    margin-bottom: auto;
+}
+
+    /* Стили для кнопок */
+    #product-lines button {
+        display: inline-block; /* Кнопки выстраиваются в одну строку */
+        padding: 10px 15px; /* Внутренние отступы */
+        font-size: 14px;
+        border: 1px solid #5b5656;
+        border-radius: 5px;
+        background-color: #333;
+        color: #fff; /* Цвет текста */
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Плавное изменение цвета */
+        margin-right: 10px;
+        white-space: nowrap; /* Запрет переноса текста внутри кнопки */
+        flex-shrink: 0; /* Запрещаем сжатие кнопок */
+    }
+
+        /* Убираем отступ у последней кнопки */
+        #product-lines button:last-child {
+            margin-right: 0;
+        }
 
 button {
     padding: 10px 20px;
@@ -503,4 +649,286 @@ admin-login:hover::before {
 
 .cart-quantity {
     margin-left: 10px;
+}
+
+#submit-button {
+    position: relative; /* Для позиционирования спиннера */
+    padding: 10px 20px; /* Отступы внутри кнопки */
+    padding-right: 40px; /* Дополнительный отступ справа для спиннера */
+    font-size: 16px;
+    min-width: 150px; /* Минимальная ширина кнопки */
+}
+
+.spinner {
+    position: absolute; /* Абсолютное позиционирование */
+    right: 10px; /* Сдвигаем спиннер правее */
+    top: 50%; /* Выравниваем по вертикали */
+    transform: translateY(-50%); /* Точное выравнивание по центру */
+    border: 2px solid #f3f3f3; /* Светлый круг */
+    border-top: 2px solid #3498db; /* Синяя линия */
+    border-radius: 50%; /* Делаем круг */
+    width: 16px; /* Размер */
+    height: 16px; /* Размер */
+    animation: spin 1s linear infinite; /* Анимация */
+}
+
+@keyframes spin {
+    0% {
+        transform: translateY(-50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(-50%) rotate(360deg);
+    }
+}
+
+/* Стили для загрузчика */
+#loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1a1a1a; /* Тёмный фон */
+    perspective: 1000px; /* Создаем 3D-пространство */
+    z-index: 1000; /* Убедитесь, что загрузчик поверх всего */
+    transition: opacity 0.5s ease; /* Плавное исчезновение */
+}
+
+/* Анимация исчезновения звёзд */
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Класс для исчезновения */
+.star.fade-out {
+    animation: fadeOut 1s ease-in-out forwards !important; /* Приоритет над другими анимациями */
+}
+
+/* Контейнер для звёзд */
+.stars-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; /* Убедитесь, что звёзды находятся за орбитами */
+}
+
+/* Стили для звёзд */
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.6);
+    animation: twinkle 2s infinite ease-in-out;
+}
+
+/* Анимация мерцания звёзд */
+@keyframes twinkle {
+    0%, 100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* Анимация движения звёзд */
+@keyframes moveStar {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    100% {
+        transform: translate(100px, 100px); /* Измените значения для хаотичного движения */
+    }
+}
+
+/* Центральный элемент */
+#loader::after {
+    content: '';
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, #fff, #ccc);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+.orbit {
+    position: absolute;
+    border-radius: 50%;
+    transform-style: preserve-3d;
+    animation: spin linear infinite;
+    will-change: transform;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3), 0 0 20px rgba(255, 255, 255, 0.2);
+    background: radial-gradient( circle, transparent 70%, /* Внутренняя прозрачная область */
+    rgba(255, 255, 255, 0.1) 70%, /* Начало границы */
+    rgba(255, 255, 255, 0.3) 80%, /* Конец границы */
+    transparent 80% /* Внешняя прозрачная область */
+    );
+    mask: radial-gradient( circle, transparent 70%, /* Внутренняя прозрачная область */
+    black 70%, /* Начало маски */
+    black 80%, /* Конец маски */
+    transparent 80% /* Внешняя прозрачная область */
+    );
+}
+
+.orbit-1 {
+    width: 100px;
+    height: 100px;
+    animation-duration: 6s;
+    animation-direction: reverse;
+    transform: rotateX(60deg) rotateY(30deg);
+}
+
+.orbit-2 {
+    width: 150px;
+    height: 150px;
+    animation-duration: 8s;
+    animation-direction: normal;
+    transform: rotateX(45deg) rotateY(60deg);
+}
+
+.orbit-3 {
+    width: 200px;
+    height: 200px;
+    animation-duration: 10s;
+    animation-direction: reverse;
+    transform: rotateX(30deg) rotateY(45deg);
+}
+
+.orbit-4 {
+    width: 250px;
+    height: 250px;
+    animation-duration: 12s;
+    animation-direction: normal;
+    transform: rotateX(60deg) rotateY(30deg);
+}
+
+.orbit-5 {
+    width: 300px;
+    height: 300px;
+    animation-duration: 14s;
+    animation-direction: reverse;
+    transform: rotateX(45deg) rotateY(60deg);
+}
+
+.orbit-6 {
+    width: 350px;
+    height: 350px;
+    animation-duration: 16s;
+    animation-direction: normal;
+    transform: rotateX(30deg) rotateY(45deg);
+}
+
+.orbit-7 {
+    width: 400px;
+    height: 400px;
+    animation-duration: 18s;
+    animation-direction: reverse;
+    transform: rotateX(60deg) rotateY(30deg);
+}
+
+/* Анимация вращения */
+@keyframes spin {
+    0% {
+        transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    }
+
+    100% {
+        transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+    }
+}
+
+/* Индикатор прогресса */
+.progress {
+    position: absolute;
+    color: #212773;
+    font-size: 20px;
+    z-index: 1001;
+}
+
+/* Скрыть основной контент до завершения загрузки */
+.hidden {
+    display: none;
+}
+
+/* Ограничение размера для мобильных устройств */
+@media (max-width: 600px) {
+    .orbit-1 {
+        width: 80px;
+        height: 80px;
+    }
+
+    .orbit-2 {
+        width: 120px;
+        height: 120px;
+    }
+
+    .orbit-3 {
+        width: 160px;
+        height: 160px;
+    }
+
+    .orbit-4 {
+        width: 200px;
+        height: 200px;
+    }
+
+    .orbit-5 {
+        width: 240px;
+        height: 240px;
+    }
+
+    .orbit-6 {
+        width: 280px;
+        height: 280px;
+    }
+
+    .orbit-7 {
+        width: 320px;
+        height: 320px;
+    }
+}
+
+/* Поддержка prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+    .orbit {
+        animation: none;
+    }
+
+    #loader::before {
+        animation: none;
+    }
+
+    #loader::after {
+        animation: none;
+    }
 }
