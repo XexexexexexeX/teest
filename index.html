@@ -35,79 +35,80 @@
         <div class="orbit orbit-6"></div>
         <div class="orbit orbit-7"></div>
     </div>
-    
-    <!-- Модальное окно для подтверждения возраста -->
-    <div id="age-verification-modal" class="modal">
-        <div class="modal-content">
-            <h2>Вам есть 18 лет?</h2>
-            <button id="age-yes">Да</button>
-            <button id="age-no">Нет</button>
-        </div>
-    </div>
 
-    <!-- Кнопка для входа в админ-панель -->
-    <admin-login id="admin-login" style="display: none;">Войти в админ-панель</admin-login>
-
-    <!-- Админ-панель (скрыта по умолчанию) -->
-    <div id="admin-panel" class="admin-panel hidden">
-        <h2>Админ-панель</h2>
-        <form id="product-form">
-            <input type="hidden" id="product-id" /> <!-- Скрытое поле для ID -->
-            <input type="text" id="product-name" placeholder="Название товара" required>
-            <input type="text" id="product-brand" placeholder="Бренд" required>
-            <input type="text" id="product-line" placeholder="Линейка">
-            <input type="text" id="product-description" placeholder="Описание" required>
-            <input type="number" id="product-price" placeholder="Цена" required>
-            <input type="text" id="product-image" placeholder="Ссылка на изображение" required>
-            <input type="number" id="product-stock" placeholder="Количество на складе" required>
-            <select id="product-category">
-                <option value="ecigs">Электронные сигареты</option>
-                <option value="snys">Снюс</option>
-                <option value="drinks">Напитки</option>
-            </select>
-            <button id="add/edd">Сохранить товар</button>
-        </form>
-        <div id="product-categories" class="product-categories"></div>
-        <div id="product-sub-categories" class="product-sub-categories"></div>
-        <div id="product-lines" class="product-lines"></div>
-        <div id="product-list"></div>
-        <div id="toggle-product-list" class="hidden">
-            <span></span> 
-        </div>
-    </div>
-
-    <!-- Основной контент -->
-    <div class="container">
-        <h1>Наши товары</h1>
-        <div id="categories" class="categories"></div>
-        <div id="sub-categories" class="sub-categories"></div>
-        <div id="lines" class="lines"></div>
-        <div id="sort-buttons" class="sort-buttons"></div>
-        <div id="products" class="products"></div>
-    </div>
-
-    <!-- Корзина -->
-    <button id="cart-button" class="hidden">Корзина (0)</button>
-
-    <!-- Модальное окно корзины -->
-    <div id="cart-modal" class="modal">
-        <div class="modal-content">
-            <h2>Корзина</h2>
-            <div id="cart-items">   
+    <div id="main-content" class="hidden">
+        <!-- Модальное окно для подтверждения возраста -->
+        <div id="age-verification-modal" class="modal">
+            <div class="modal-content">
+                <h2>Вам есть 18 лет?</h2>
+                <button id="age-yes">Да</button>
+                <button id="age-no">Нет</button>
             </div>
-            <p id="cart-total"></p>
-            <form id="pickup-form">
-                <input type="text" id="pickup-name" placeholder="Ваше имя" required>
-                <input type="tel" id="pickup-phone" placeholder="Ваш телефон" required>
-                <button type="submit">Оформить самовывоз</button>
+        </div>
+
+        <!-- Кнопка для входа в админ-панель -->
+        <admin-login id="admin-login"></admin-login>
+
+        <!-- Админ-панель (скрыта по умолчанию) -->
+        <div id="admin-panel" class="admin-panel hidden">
+            <h2>Админ-панель</h2>
+            <form id="product-form">
+                <input type="hidden" id="product-id" /> <!-- Скрытое поле для ID -->
+                <input type="text" id="product-name" placeholder="Название товара" required>
+                <input type="text" id="product-brand" placeholder="Бренд" required>
+                <input type="text" id="product-line" placeholder="Линейка">
+                <input type="text" id="product-description" placeholder="Описание" required>
+                <input type="number" id="product-price" placeholder="Цена" required>
+                <input type="text" id="product-image" placeholder="Ссылка на изображение" required>
+                <input type="number" id="product-stock" placeholder="Количество на складе" required>
+                <select id="product-category">
+                    <option value="ecigs">Электронные сигареты</option>
+                    <option value="snys">Снюс</option>
+                    <option value="drinks">Напитки</option>
+                </select>
+                <button id="add/edd">Добавить/Изменить товар</button>
             </form>
-            <button id="close-cart">Закрыть</button> <!-- Кнопка закрытия корзины -->
-            <p>*Не забудьте взять паспорт для подтверждения возраста.</p>
+            <div id="product-categories" class="product-categories"></div>
+            <div id="product-sub-categories" class="product-sub-categories"></div>
+            <div id="product-lines" class="product-lines"></div>
+            <div id="product-list"></div>
+            <div id="toggle-product-list" class="hidden">
+                <span></span> <!-- Иконка или текст -->
+            </div>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="container">
+            <h1>Наши товары</h1>
+            <div id="categories" class="categories"></div>
+            <div id="sub-categories" class="sub-categories"></div>
+            <div id="lines" class="lines"></div>
+            <div id="sort-buttons" class="sort-buttons"></div>
+            <div id="products" class="products"></div>
+        </div>
+
+        <!-- Корзина -->
+        <button id="cart-button" class="hidden">Корзина (0)</button>
+
+        <!-- Модальное окно корзины -->
+        <div id="cart-modal" class="modal">
+            <div class="modal-content">
+                <h2>Корзина</h2>
+                <div id="cart-items">
+                </div>
+                <p id="cart-total"></p>
+                <form id="pickup-form">
+                    <input type="text" id="pickup-name" placeholder="Ваше имя" required>
+                    <input type="tel" id="pickup-phone" placeholder="Ваш телефон" required>
+                    <button type="submit" id="submit-button">Оформить самовызов</button>
+                </form>
+                <button id="close-cart">Закрыть</button> <!-- Кнопка закрытия корзины -->
+                <p>*Не забудьте взять паспорт для подтверждения возраста.</p>
+            </div>
         </div>
     </div>
-
     <!-- Подключение JavaScript -->
-    <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
