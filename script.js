@@ -910,7 +910,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Загрузка данных с сервера
     async function loadProducts() {
         try {
-            const response = await fetch('http://localhost:62000/api/products', {
+            const response = await fetch('https://tabachoook.ru/api/products', {
                 method: 'POST', // Используем POST вместо GET
                 headers: {
                     'Content-Type': 'application/json', // Указываем тип содержимого
