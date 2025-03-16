@@ -16,9 +16,26 @@
             padding: 0;
             height: 100vh;
         }
+                /* Скрыть основной контент по умолчанию */
+        .main-content {
+            display: none;
+        }
     </style>
 </head>
 <body>
+    <!-- Загрузчик -->
+    <div id="loader">
+        <div class="progress">0%</div>
+        <div class="stars-container"></div> <!-- Контейнер для звёзд -->
+        <div class="orbit orbit-1"></div>
+        <div class="orbit orbit-2"></div>
+        <div class="orbit orbit-3"></div>
+        <div class="orbit orbit-4"></div>
+        <div class="orbit orbit-5"></div>
+        <div class="orbit orbit-6"></div>
+        <div class="orbit orbit-7"></div>
+    </div>
+    
     <!-- Модальное окно для подтверждения возраста -->
     <div id="age-verification-modal" class="modal">
         <div class="modal-content">
@@ -45,9 +62,14 @@
             <input type="number" id="product-stock" placeholder="Количество на складе" required>
             <select id="product-category">
                 <option value="ecigs">Электронные сигареты</option>
+                <option value="snys">Снюс</option>
+                <option value="drinks">Напитки</option>
             </select>
             <button id="add/edd">Сохранить товар</button>
         </form>
+        <div id="product-categories" class="product-categories"></div>
+        <div id="product-sub-categories" class="product-sub-categories"></div>
+        <div id="product-lines" class="product-lines"></div>
         <div id="product-list"></div>
         <div id="toggle-product-list" class="hidden">
             <span></span> 
