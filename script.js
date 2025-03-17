@@ -747,7 +747,7 @@ document.getElementById("pickup-form").addEventListener("submit", async (e) => {
 
     try {
         // Отправляем данные на сервер
-        const response = await fetch('http://localhost:62000/order', {
+        const response = await fetch('https://tabachoook.ru/order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
