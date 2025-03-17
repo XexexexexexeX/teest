@@ -837,25 +837,54 @@ function renderSortButtons() {
     sortContainer.appendChild(sortByPriceButton);
 }
 
-// Инициализация
+// Загрузка данных с Telegram
+async function loadTelegramData() {
+    return new Promise((resolve, reject) => {
+        try {
+            Telegram.WebApp.ready(); // Инициализация Telegram Web App
+            console.log('Данные Telegram загружены');
+            resolve();
+        } catch (error) {
+            console.error('Ошибка при загрузке данных Telegram:', error);
+            reject(error);
+        }
+    });
+}
+
+// Загрузка данных с сервера
+async function loadProduct() {
+    try {
+        const response = await fetch('https://tabachoook.ru/api/products', {
+            method: 'POST', // Используем POST вместо GET
+            headers: {
+                'Content-Type': 'application/json', // Указываем тип содержимого
+            },
+            body: JSON.stringify({}), // Пустое тело запроса (или можно передать параметры, если нужно)
+        });
+
+        if (response.ok) {
+            const data = await response.json(); // Получаем данные
+            products = data; // Обновляем глобальный объект products
+            console.log('Товары загружены с сервера:', data);
+        } else {
+            console.error('Ошибка при загрузке товаров:', response.status, response.statusText);
+            throw new Error('Ошибка при загрузке товаров');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        throw error;
+    }
+}
+
 // Инициализация
 document.addEventListener("DOMContentLoaded", () => {
     const loader = document.getElementById('loader');
+    const progressElement = document.querySelector('.progress');
     const mainContent = document.getElementById('main-content');
     const starsContainer = document.querySelector('.stars-container');
-    const progressElement = document.querySelector('.progress');
-
-    // Инициализация Telegram Web App
-    try {
-        Telegram.WebApp.ready();
-    } catch (error) {
-        console.error('Ошибка при инициализации Telegram Web App:', error);
-        showError(); // Показываем ошибку
-        return; // Прекращаем выполнение
-    }
 
     // Создаём звёзды
-    const numStars = 40; // Количество звёзд
+    const numStars = 50; // Количество звёзд
     const starColors = ['#ffffff', '#aaf', '#ffa', '#f90', '#f00']; // Белый, голубой, жёлтый, оранжевый, красный
 
     for (let i = 0; i < numStars; i++) {
@@ -886,22 +915,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Функция для обновления прогресса
-    function updateProgress(percent) {
-        progressElement.textContent = `${Math.round(percent)}%`; // Обновляем текст прогресса
+    function updateProgress(progress) {
+        progressElement.textContent = `${Math.round(progress)}%`;
     }
 
-    // Функция для отображения ошибки
-    function showError() {
-        progressElement.textContent = '∞'; // Показываем знак бесконечности
-        progressElement.style.color = 'red'; // Меняем цвет на красный для индикации ошибки
-
-        // Показываем сообщение об ошибке
-        setTimeout(() => {
-            alert('Произошла ошибка при загрузке. Пожалуйста, попробуйте позже.');
-        }, 1000);
-    }
-
-    // Плавное увеличение прогресса
+    // Функция для плавного увеличения прогресса
     function animateProgress(targetPercent, duration) {
         return new Promise((resolve) => {
             const startTime = performance.now();
@@ -925,93 +943,77 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Загрузка данных с сервера
-    async function loadProducts() {
-        try {
-            const response = await fetch('https://tabachoook.ru/api/products', {
-                method: 'POST', // Используем POST вместо GET
-                headers: {
-                    'Content-Type': 'application/json', // Указываем тип содержимого
-                },
-                body: JSON.stringify({}), // Пустое тело запроса (или можно передать параметры, если нужно)
-            });
+    // Функция для завершения загрузки
+    function completeLoading() {
+        // Плавное исчезновение загрузчика
+        loader.style.opacity = '0';
+        setTimeout(() => {
+            loader.style.display = 'none';
+            mainContent.classList.remove('hidden'); // Показать основной контент
 
-            if (response.ok) {
-                const data = await response.json(); // Получаем данные
-                console.log('Товары загружены с сервера:', data);
+            // Вызов функций после завершения загрузки
+            showAgeVerification(); // Показываем окно подтверждения возраста
+            loadCart(); // Загружаем корзину из localStorage
+            renderCategories(); // Рендерим категории
+            renderSortButtons(); // Рендерим кнопки сортировки
 
-                // Обновляем прогресс до 100%
-                await animateProgress(100, 1000); // Плавное увеличение до 100% за 1 секунду
-
-                // Запускаем исчезновение звёзд
-                const stars = document.querySelectorAll('.star');
-                let starsRemaining = stars.length; // Счётчик оставшихся звёзд
-
-                stars.forEach((star, index) => {
-                    setTimeout(() => {
-                        // Останавливаем анимацию движения
-                        star.style.animation = 'none';
-
-                        // Добавляем класс для исчезновения
-                        star.classList.add('fade-out');
-
-                        // Обрабатываем завершение анимации
-                        const handleAnimationEnd = () => {
-                            star.remove(); // Удаляем звезду из DOM после завершения анимации
-                            starsRemaining--; // Уменьшаем счётчик оставшихся звёзд
-
-                            // Если все звёзды исчезли, завершаем загрузку
-                            if (starsRemaining === 0) {
-                                // Плавное исчезновение загрузчика
-                                loader.style.opacity = '0';
-                                setTimeout(() => {
-                                    loader.style.display = 'none';
-                                    mainContent.classList.remove('hidden'); // Показать основной контент
-
-                                    // Вызов функций после завершения загрузки
-                                    showAgeVerification(); // Показываем окно подтверждения возраста
-                                    loadCart(); // Загружаем корзину из localStorage
-                                    renderCategories(); // Рендерим категории
-                                    renderSortButtons(); // Рендерим кнопки сортировки
-
-                                    // Скрываем корзину при загрузке страницы
-                                    const cartModal = document.getElementById("cart-modal");
-                                    cartModal.style.display = "none";
-                                }, 500); // Задержка для завершения анимации opacity
-                            }
-
-                            // Удаляем обработчик события после завершения
-                            star.removeEventListener('animationend', handleAnimationEnd);
-                        };
-
-                        // Добавляем обработчик события animationend
-                        star.addEventListener('animationend', handleAnimationEnd);
-                    }, index * 50); // Задержка для каждой звезды (50 мс между звёздами)
-                });
-            } else {
-                console.error('Ошибка при загрузке товаров:', response.status, response.statusText);
-                showError(); // Показываем ошибку
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            showError(); // Показываем ошибку
-        }
+            // Скрываем корзину при загрузке страницы
+            const cartModal = document.getElementById("cart-modal");
+            cartModal.style.display = "none";
+        }, 500); // Задержка для завершения анимации opacity
     }
 
-    // Основная функция загрузки
-    async function startLoading() {
-        try {
-            // Плавное увеличение прогресса до 50% (Telegram)
-            await animateProgress(50, 1000); // 50% за 1 секунду
+    // Функция для исчезновения звёзд
+    function fadeOutStars() {
+        const stars = document.querySelectorAll('.star');
+        let starsRemaining = stars.length; // Счётчик оставшихся звёзд
 
-            // Загрузка данных с сайта (оставшиеся 50%)
-            await loadProducts();
+        stars.forEach((star, index) => {
+            setTimeout(() => {
+                // Останавливаем анимацию движения
+                star.style.animation = 'none';
+
+                // Добавляем класс для исчезновения
+                star.classList.add('fade-out');
+
+                // Обрабатываем завершение анимации
+                const handleAnimationEnd = () => {
+                    star.remove(); // Удаляем звезду из DOM после завершения анимации
+                    starsRemaining--; // Уменьшаем счётчик оставшихся звёзд
+
+                    // Если все звёзды исчезли, завершаем загрузку
+                    if (starsRemaining === 0) {
+                        completeLoading(); // Завершаем загрузку после исчезновения всех звёзд
+                    }
+
+                    // Удаляем обработчик события после завершения
+                    star.removeEventListener('animationend', handleAnimationEnd);
+                };
+
+                // Добавляем обработчик события animationend
+                star.addEventListener('animationend', handleAnimationEnd);
+            }, index * 50); // Задержка для каждой звезды (50 мс между звёздами)
+        });
+    }
+
+    // Задержка для загрузки
+    setTimeout(async () => {
+        try {
+            // Первая часть: загрузка данных с Telegram (0% → 50%)
+            await loadTelegramData(); // Загрузка данных с Telegram
+            await animateProgress(50, 1000); // Плавное увеличение до 50%
+
+            // Вторая часть: загрузка данных с сервера (50% → 100%)
+            await loadProduct(); // Загрузка данных с сервера
+            await animateProgress(100, 1000); // Плавное увеличение до 100%
+
+            // Если всё успешно, начинаем исчезновение звёзд
+            fadeOutStars();
         } catch (error) {
+            // В случае ошибки показываем знак бесконечности и не открываем основной сайт
+            progressElement.textContent = '∞';
             console.error('Ошибка при загрузке:', error);
-            showError(); // Показываем ошибку
+            alert('Ошибка загрузки данных с сервера. Пожалуйста, попробуйте позже.');
         }
-    }
-
-    // Запускаем процесс загрузки
-    startLoading();
+    }, 1000); // Время загрузки в миллисекундах (3995 секунд)
 });
