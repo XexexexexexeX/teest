@@ -610,8 +610,8 @@ function addToCart(product, quantity) {
         alert("Недостаточно товара на складе.");
         return;
     }
-    // Проверяем, есть ли товар уже в корзине
-    const existingItem = cart.find(item => item.name === product.name && item.price === product.price);
+    
+    const existingItem = cart.find(item => item.id === product.id);
 
     if (existingItem) {
         // Если товар уже есть в корзине, увеличиваем его количество
