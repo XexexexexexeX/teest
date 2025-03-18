@@ -6,16 +6,6 @@
     <title>Магазин электронных сигарет</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        body {
-            background-image: url('https://avatars.mds.yandex.net/i?id=b488204d57dedb1b0e48d395c43f966e_l-4119220-images-thumbs&n=13');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-        }
                 /* Скрыть основной контент по умолчанию */
         .main-content {
             display: none;
@@ -37,12 +27,17 @@
     </div>
 
     <div id="main-content">
+        <div id="background-stars" class="stars-container"></div>
         <!-- Модальное окно для подтверждения возраста -->
         <div id="age-verification-modal" class="modal">
             <div class="modal-content">
-                <h2>Вам есть 18 лет?</h2>
-                <button id="age-yes">Да</button>
-                <button id="age-no">Нет</button>
+                <p>Данный Сайт не является рекламой, так как предназначен для ограниченного круга лиц, а именно для совершеннолетних потребителей табачной продукции (граждан России старше 18 лет) для предоставления им достоверной информации об основных потребительских свойствах и качественных характеристик табачной продукции и аксессуарах (п.1 и п.2 ст.10 Закона «О защите прав Потребителя»). Лицам, не достигшим совершеннолетия, пользование Сайтом запрещено (ст. 20 ФЗ №15 "Об охране здоровья граждан от воздействия окружающего табачного дыма, последствий потребления табака или потребления никотинсодержащей продукции").</p>
+                <p>При переходе на сайт, я подтверждаю, что мне уже исполнилось 18 лет, я являюсь потребителем табака или иной никотинсодержащей продукции и даю согласие на обработку персональных данных</p>
+                <h2>Вам больше 18 лет?</h2>
+                <div class="button-container">
+                    <button id="age-yes">Да, мне есть 18 лет</button>
+                    <button id="age-no">Нет, мне нет 18 лет</button>
+                </div>
             </div>
         </div>
 
@@ -66,7 +61,7 @@
                     <option value="snys">Снюс</option>
                     <option value="drinks">Напитки</option>
                 </select>
-                <button id="add/edd">Добавить/Изменить товар</button>
+                <button type="submit" id="save-product-button">Сохранить</button>
             </form>
             <div id="product-categories" class="product-categories"></div>
             <div id="product-sub-categories" class="product-sub-categories"></div>
