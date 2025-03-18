@@ -280,7 +280,6 @@ button {
 .products {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
     justify-content: center;
 }
 
@@ -290,15 +289,30 @@ button {
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     width: 250px;
+    max-height: 500px;
     padding: 20px;
     text-align: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
-.product-card img {
-    max-width: 100%; /* Не больше ширины родителя */
-    height: auto; /* Сохраняем пропорции */
-    border-radius: 8px;
-}
+    .product-card .image-container {
+        height: 200px; /* Фиксированная высота для контейнера изображения */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden; /* Скрываем часть изображения, если оно больше контейнера */
+        border-radius: 8px;
+    }
+
+    .product-card img {
+        max-width: 100%; /* Не больше ширины родителя */
+        max-height: 100%; /* Не больше высоты контейнера */
+        width: auto; /* Сохраняем пропорции */
+        height: auto; /* Сохраняем пропорции */
+        object-fit: cover; /* Обрезаем изображение, чтобы оно заполнило контейнер */
+        border-radius: 8px;
+    }
 
 .product-card h2 {
     font-size: 1.5em;
@@ -342,6 +356,22 @@ button {
     background-color: #1e1e1e;
     color: none;
 }
+
+.out-of-stock {
+    opacity: 0.85; /* Уменьшаем прозрачность */
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+    .out-of-stock .out-of-stock-text {
+        font-size: 18px;
+        font-weight: bold;
+        color: #ff0000; /* Красный цвет текста */
+        text-align: center;
+        margin: 20px 0;
+    }
 
 admin-login {
     display: inline-block;
@@ -434,6 +464,7 @@ admin-login:hover::before {
     border-radius: 3px;
     cursor: pointer;
     grid-area: buttons; /* Кнопки находятся в области "buttons" */
+    margin-top: 10px;
 }
 
 .product-item button:hover {
@@ -530,8 +561,32 @@ admin-login:hover::before {
     padding: 20px;
     border: 1px solid #5b5656;
     border-radius: 8px;
-    text-align: center;
+    margin: 10px;
 }
+
+#age-verification-modal .modal-content {
+    text-align: center; /* Центрирование текста и кнопок */
+}
+
+    #age-verification-modal .modal-content h2 {
+        margin-bottom: 20px; /* Отступ снизу для заголовка */
+    }
+
+    #age-verification-modal .modal-content p {
+        text-align: justify; /* Выравнивание текста по ширине */
+        margin-bottom: 20px; /* Отступ снизу для параграфов */
+    }
+
+    #age-verification-modal .modal-content .button-container {
+        display: flex; /* Контейнер для кнопок в одну строку */
+        justify-content: center; /* Центрирование кнопок по горизонтали */
+        gap: 10px; /* Отступ между кнопками */
+    }
+
+    #age-verification-modal .modal-content button {
+        padding: 10px 20px; /* Внутренние отступы для кнопок */
+    }
+
 
 /* Стили для крестика удаления товара */
 .remove-item {
@@ -726,13 +781,35 @@ admin-login:hover::before {
 }
 
 /* Стили для звёзд */
+#background-stars {
+    position: fixed; /* Фиксированное позиционирование */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+}
+
+/* Стили для звёзд */
 .star {
-    position: absolute;
+    position: fixed;
     width: 2px;
     height: 2px;
     background: white;
     border-radius: 50%;
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.6);
+    animation: twinkle 2s infinite ease-in-out;
+}
+
+/* Стили для звёзд фона сайта */
+#background-stars .star {
+    position: fixed;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 7.5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.6);
     animation: twinkle 2s infinite ease-in-out;
 }
 
@@ -785,7 +862,7 @@ admin-login:hover::before {
     position: absolute;
     border-radius: 50%;
     transform-style: preserve-3d;
-    animation: spin linear infinite;
+    animation: spinOrbit linear infinite; /* Используем spinOrbit вместо spin */
     will-change: transform;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.3), 0 0 20px rgba(255, 255, 255, 0.2);
     background: radial-gradient( circle, transparent 70%, /* Внутренняя прозрачная область */
@@ -806,6 +883,7 @@ admin-login:hover::before {
     animation-duration: 6s;
     animation-direction: reverse;
     transform: rotateX(60deg) rotateY(30deg);
+    animation: spinOrbit 6s linear infinite reverse; /* Обновлено */
 }
 
 .orbit-2 {
@@ -814,6 +892,7 @@ admin-login:hover::before {
     animation-duration: 8s;
     animation-direction: normal;
     transform: rotateX(45deg) rotateY(60deg);
+    animation: spinOrbit 8s linear infinite normal; /* Обновлено */
 }
 
 .orbit-3 {
@@ -822,6 +901,7 @@ admin-login:hover::before {
     animation-duration: 10s;
     animation-direction: reverse;
     transform: rotateX(30deg) rotateY(45deg);
+    animation: spinOrbit 10s linear infinite reverse; /* Обновлено */
 }
 
 .orbit-4 {
@@ -830,6 +910,7 @@ admin-login:hover::before {
     animation-duration: 12s;
     animation-direction: normal;
     transform: rotateX(60deg) rotateY(30deg);
+    animation: spinOrbit 12s linear infinite normal; /* Обновлено */
 }
 
 .orbit-5 {
@@ -838,6 +919,7 @@ admin-login:hover::before {
     animation-duration: 14s;
     animation-direction: reverse;
     transform: rotateX(45deg) rotateY(60deg);
+    animation: spinOrbit 14s linear infinite reverse; /* Обновлено */
 }
 
 .orbit-6 {
@@ -846,6 +928,7 @@ admin-login:hover::before {
     animation-duration: 16s;
     animation-direction: normal;
     transform: rotateX(30deg) rotateY(45deg);
+    animation: spinOrbit 16s linear infinite normal; /* Обновлено */
 }
 
 .orbit-7 {
@@ -854,10 +937,11 @@ admin-login:hover::before {
     animation-duration: 18s;
     animation-direction: reverse;
     transform: rotateX(60deg) rotateY(30deg);
+    animation: spinOrbit 18s linear infinite reverse; /* Обновлено */
 }
 
 /* Анимация вращения */
-@keyframes spin {
+@keyframes spinOrbit {
     0% {
         transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
     }
