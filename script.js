@@ -44,6 +44,8 @@ function toggleProductList() {
 // Добавьте обработчик события для кнопки
 document.getElementById("toggle-product-list").addEventListener("click", toggleProductList);
 
+let initialScrollPosition = window.scrollY; // Сохраняем изначальное положение прокрутки
+
 // Обработка формы с предварительным обновлением данных
 document.getElementById("product-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -96,6 +98,12 @@ document.getElementById("product-form").addEventListener("submit", async (e) => 
     renderProductList(category, brand);
     document.getElementById("product-form").reset(); // Очищаем форму
     saveProducts(); // Сохраняем данные
+});
+
+// Обработчик для кнопки "Добавить/Изменить товар"
+document.getElementById("save-product-button").addEventListener("click", () => {
+    // Восстанавливаем изначальное положение прокрутки
+    window.scrollTo({ top: initialScrollPosition, behavior: "smooth" }); // Плавная прокрутка
 });
 
 // Рендер списка товаров в админ-панели с фильтрацией
@@ -157,6 +165,8 @@ function renderProductList(category = null, brand = null, line = null) {
                 <p>Наличие: ${product.stock} шт.</p>
                 <button onclick="editProduct('${currentCategory}', ${product.id})">Изменить</button>
                 <button onclick="deleteProduct('${currentCategory}', ${product.id})">Удалить</button>
+                <button onclick="duplicateProduct('${currentCategory}', ${product.id})">Дублировать</button>
+                <button onclick="handleOutOfStock('${currentCategory}', ${product.id})">Нет в наличии</button>
             `;
 
             // Добавляем содержимое и картинку в карточку
@@ -171,6 +181,9 @@ function renderProductList(category = null, brand = null, line = null) {
 
 // Редактирование товара
 function editProduct(category, id) {
+    // Сохраняем текущее положение прокрутки
+    initialScrollPosition = window.scrollY;
+
     const product = products[category].find(p => p.id === id); // Находим товар по ID
     if (product) {
         document.getElementById("product-id").value = product.id; // Сохраняем ID в скрытое поле
@@ -183,6 +196,7 @@ function editProduct(category, id) {
         document.getElementById("product-stock").value = product.stock;
         document.getElementById("product-category").value = category;
     }
+    window.scrollTo({ top: 0, behavior: "smooth" }); // Плавная прокрутка
 }
 
 // Удаление товара
@@ -192,6 +206,54 @@ function deleteProduct(category, id) {
     renderProductList(category);
     saveProducts(); // Сохраняем данные
 }
+
+// Дублирование товара
+function duplicateProduct(category, id) {
+    // Сохраняем текущее положение прокрутки
+    initialScrollPosition = window.scrollY;
+
+    const product = products[category].find(p => p.id === id); // Находим товар по ID
+
+    if (product) {
+        // Генерируем новый ID
+        const newId = Date.now();
+
+        // Копируем данные товара
+        const duplicatedProduct = {
+            ...product,
+            id: newId, // Новый ID
+        };
+
+        // Вставляем данные в форму
+        document.getElementById("product-id").value = ""; // Очищаем ID (новый товар)
+        document.getElementById("product-name").value = duplicatedProduct.name;
+        document.getElementById("product-brand").value = duplicatedProduct.brand;
+        document.getElementById("product-line").value = duplicatedProduct.line;
+        document.getElementById("product-description").value = duplicatedProduct.description;
+        document.getElementById("product-price").value = duplicatedProduct.price;
+        document.getElementById("product-image").value = duplicatedProduct.image;
+        document.getElementById("product-stock").value = duplicatedProduct.stock;
+        document.getElementById("product-category").value = category;
+
+        // Прокручиваем страницу к форме
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        alert("Товар успешно дублирован. Заполните форму и сохраните новый товар.");
+    }
+}
+
+// Нет в наличии товара
+function handleOutOfStock(category, id) {
+    const product = products[category].find(p => p.id === id); // Находим товар по ID
+    if (product) {
+        product.stock = 0; // Устанавливаем количество товара на 0
+        alert(`Товар "${product.name}" теперь отсутствует на складе.`);
+        renderProducts(category); // Обновляем отображение товаров
+        renderProductList(category);
+        saveProducts(); // Сохраняем данные
+    }
+}
+
 
 // Сохранение данных
 async function saveProducts() {
@@ -439,7 +501,7 @@ function clearProducts() {
     }
 }
 
-// Рендер товаров
+//Рендер товаров
 function renderProducts(category, brand, line) {
     const productsContainer = document.getElementById("products");
     productsContainer.innerHTML = ""; // Очищаем контейнер
@@ -453,9 +515,29 @@ function renderProducts(category, brand, line) {
         const card = document.createElement("div"); // Создаём карточку товара
         card.classList.add("product-card"); // Добавляем класс
 
-        const image = document.createElement("img"); // Создаём изображение
-        image.src = product.image; // Устанавливаем ссылку на изображение
-        image.alt = product.name; // Устанавливаем альтернативный текст
+        // Проверяем, если товара нет в наличии (stock <= 0)
+        const isOutOfStock = product.stock <= 0;
+
+        // Если товара нет в наличии, добавляем специальный класс
+        if (isOutOfStock) {
+            card.classList.add("out-of-stock");
+        }
+
+        // Блок для изображения или текста "Нет в наличии"
+        const imageContainer = document.createElement("div");
+        imageContainer.classList.add("image-container");
+
+        if (isOutOfStock) {
+            const outOfStockText = document.createElement("p");
+            outOfStockText.textContent = "Нет в наличии";
+            outOfStockText.classList.add("out-of-stock-text");
+            imageContainer.appendChild(outOfStockText);
+        } else {
+            const image = document.createElement("img"); // Создаём изображение
+            image.src = product.image; // Устанавливаем ссылку на изображение
+            image.alt = product.name; // Устанавливаем альтернативный текст
+            imageContainer.appendChild(image);
+        }
 
         const title = document.createElement("h2"); // Создаём заголовок
         title.textContent = product.name; // Устанавливаем текст заголовка
@@ -464,67 +546,95 @@ function renderProducts(category, brand, line) {
         description.textContent = product.description; // Устанавливаем текст описания
 
         const stock = document.createElement("p"); // Количество на складе
-        stock.textContent = `В наличии ${product.stock} шт.`;
+        stock.textContent = isOutOfStock ? "Нет в наличии" : `В наличии: ${product.stock} шт.`; // Устанавливаем текст в зависимости от наличия
 
         const price = document.createElement("p"); // Создаём цену
         price.classList.add("price"); // Добавляем класс
         price.textContent = `Цена: ${formatPrice(product.price)} руб.`; // Устанавливаем текст цены
 
-        const quantityInput = document.createElement("input"); // Поле для ввода количества
-        quantityInput.type = "number";
-        quantityInput.min = 1;
-        quantityInput.max = product.stock; // Максимальное количество — количество на складе
-        quantityInput.value = 1; // Значение по умолчанию
-        quantityInput.classList.add("quantity-input");
+        // Поле для ввода количества (только если товар в наличии)
+        let quantityInput = null;
+        let addToCartButton = null;
 
-        // Ограничение ввода
-        quantityInput.addEventListener("input", (e) => {
-            const value = parseInt(e.target.value);
-            if (value > product.stock) {
-                e.target.value = product.stock; // Устанавливаем максимальное значение
-            } else if (value < 1) {
-                e.target.value = 1; // Устанавливаем минимальное значение
-            }
-        });
+        if (!isOutOfStock) {
+            quantityInput = document.createElement("input"); // Поле для ввода количества
+            quantityInput.type = "number";
+            quantityInput.min = 1;
+            quantityInput.max = product.stock; // Максимальное количество — количество на складе
+            quantityInput.value = 1; // Значение по умолчанию
+            quantityInput.classList.add("quantity-input");
 
-        const addToCartButton = document.createElement("button"); // Создаём кнопку
-        addToCartButton.textContent = "Добавить в корзину"; // Устанавливаем текст кнопки
-        addToCartButton.addEventListener("click", () => {
-            const quantity = parseInt(quantityInput.value);
-            if (quantity > 0 && quantity <= product.stock) {
-                addToCart(product, quantity); // Добавляем товар в корзину с указанным количеством
-            } else {
-                alert("Укажите корректное количество.");
-            }
-        });
+            // Ограничение ввода
+            quantityInput.addEventListener("input", (e) => {
+                const value = parseInt(e.target.value);
+                if (value > product.stock) {
+                    e.target.value = product.stock; // Устанавливаем максимальное значение
+                } else if (value < 1) {
+                    e.target.value = 1; // Устанавливаем минимальное значение
+                }
+            });
 
-        card.appendChild(image); // Добавляем изображение в карточку
+            addToCartButton = document.createElement("button"); // Создаём кнопку
+            addToCartButton.textContent = "Добавить в корзину"; // Устанавливаем текст кнопки
+            addToCartButton.addEventListener("click", () => {
+                const quantity = parseInt(quantityInput.value);
+                if (quantity > 0 && quantity <= product.stock) {
+                    addToCart(product, quantity); // Добавляем товар в корзину с указанным количеством
+                } else {
+                    alert("Укажите корректное количество.");
+                }
+            });
+        }
+
+        // Добавляем элементы в карточку
+        card.appendChild(imageContainer); // Добавляем контейнер с изображением или текстом
         card.appendChild(title); // Добавляем заголовок в карточку
         card.appendChild(description); // Добавляем описание в карточку
         card.appendChild(price); // Добавляем цену в карточку
         card.appendChild(stock); // Добавляем наличие в карточку
-        card.appendChild(quantityInput); // Добавляем поле для ввода количества
-        card.appendChild(addToCartButton); // Добавляем кнопку в карточку
+
+        if (quantityInput) {
+            card.appendChild(quantityInput); // Добавляем поле для ввода количества
+        }
+        if (addToCartButton) {
+            card.appendChild(addToCartButton); // Добавляем кнопку в корзину
+        }
 
         productsContainer.appendChild(card); // Добавляем карточку в контейнер
     });
 }
+
 // Добавление в корзину с количеством
 function addToCart(product, quantity) {
     if (quantity > product.stock) {
         alert("Недостаточно товара на складе.");
         return;
     }
-    // Добавляем товар в корзину вместе с количеством и stock
-    cart.push({
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        quantity: quantity,
+    // Проверяем, есть ли товар уже в корзине
+    const existingItem = cart.find(item => item.name === product.name && item.price === product.price);
+
+    if (existingItem) {
+        // Если товар уже есть в корзине, увеличиваем его количество
+        const newQuantity = existingItem.quantity + quantity;
+
+        // Проверяем, не превышает ли новое количество доступный запас
+        if (newQuantity > product.stock) {
+            alert("Недостаточно товара на складе.");
+            return;
+        }
+        existingItem.quantity = newQuantity; // Обновляем количество
+    } else {
+        // Если товара нет в корзине, добавляем его
+        cart.push({
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            quantity: quantity,
             stock: product.stock, // Сохраняем stock
-    });
-saveCart(); // Сохраняем корзину
-renderCartButton(); // Обновляем кнопку корзины
+        });
+    }
+    saveCart(); // Сохраняем корзину
+    renderCartButton(); // Обновляем кнопку корзины
 }
 
 // Рендер кнопки корзины
@@ -876,12 +986,50 @@ async function loadProduct() {
     }
 }
 
+// Функция для создания звёзд фона сайта
+function createBackgroundStars() {
+    const starsContainer = document.getElementById('background-stars');
+    const numStars = 60; // Уменьшенное количество звёзд
+    const starColors = ['#ffffff', '#aaf', '#ffa', '#f90', '#f00'];
+
+    // Получаем размеры документа
+    const documentWidth = document.documentElement.scrollWidth;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    for (let i = 0; i < numStars; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+
+        // Случайное положение в пределах документа
+        const x = Math.random() * documentWidth;
+        const y = Math.random() * documentHeight;
+        star.style.left = `${x}px`;
+        star.style.top = `${y}px`;
+
+        // Случайный цвет
+        const color = starColors[Math.floor(Math.random() * starColors.length)];
+        star.style.backgroundColor = color;
+        star.style.boxShadow = `0 0 5px ${color}, 0 0 10px ${color}`;
+
+        // Случайная задержка анимации
+        const delay = Math.random() * 2;
+        star.style.animationDelay = `${delay}s`;
+
+        // Случайное движение
+        const moveX = (Math.random() - 0.5) * 200;
+        const moveY = (Math.random() - 0.5) * 200;
+        star.style.animation = `moveStar ${5 + Math.random() * 10}s linear infinite alternate`;
+
+        starsContainer.appendChild(star);
+    }
+}
+
 // Инициализация
 document.addEventListener("DOMContentLoaded", () => {
     const loader = document.getElementById('loader');
     const progressElement = document.querySelector('.progress');
     const mainContent = document.getElementById('main-content');
-    const starsContainer = document.querySelector('.stars-container');
+    const starsContainer = document.getElementById('loader-stars');
 
     // Создаём звёзды
     const numStars = 50; // Количество звёзд
@@ -956,7 +1104,7 @@ document.addEventListener("DOMContentLoaded", () => {
             loadCart(); // Загружаем корзину из localStorage
             renderCategories(); // Рендерим категории
             renderSortButtons(); // Рендерим кнопки сортировки
-
+            createBackgroundStars();//фон сайта
             // Скрываем корзину при загрузке страницы
             const cartModal = document.getElementById("cart-modal");
             cartModal.style.display = "none";
