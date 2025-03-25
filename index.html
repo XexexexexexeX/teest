@@ -94,8 +94,14 @@
                 </div>
                 <p id="cart-total"></p>
                 <form id="pickup-form">
-                    <input type="text" id="pickup-name" placeholder="Ваше имя" required>
-                    <input type="tel" id="pickup-phone" placeholder="Ваш телефон" required>
+                    <input type="text" id="pickup-name" maxlength="30" placeholder="Ваше имя" required>
+                    <input type="tel" id="pickup-phone" placeholder="Ваш номер телефона" required>
+                    <textarea id="order-comment"
+                            name="comment"
+                            placeholder="Ваши пожелания по заказу (до 350 символов)"
+                            maxlength="350"
+                            rows="4"></textarea>
+                    <div class="char-counter"><span id="comment-counter">0</span>/350</div>
                     <button type="submit" id="submit-button">Оформить самовызов</button>
                 </form>
                 <button id="close-cart">Закрыть</button> <!-- Кнопка закрытия корзины -->
