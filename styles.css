@@ -330,20 +330,6 @@ button {
     font-weight: bold;
 }
 
-.product-card button {
-    background-color: #61686f;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.product-card button:hover {
-    background-color: #0056b3;
-}
-
 .hidden {
     display: none;
 }
@@ -593,11 +579,12 @@ admin-login:hover::before {
     cursor: pointer;
     color: #999;
     font-size: 20px;
-    margin-left: 10px;
+    position: absolute;
+    right: 0; /* Прижимаем к правому краю */
 }
 
-.remove-item:hover {
-    color: #ff0000; /* Красный цвет при наведении */
+    .remove-item:hover {
+        color: #ff0000; /* Красный цвет при наведении */
 }
 
 .modal-content h2 {
@@ -650,6 +637,20 @@ admin-login:hover::before {
     font-weight: bold;
 }
 
+.cart-item-controls {
+    position: relative; /* Для абсолютного позиционирования remove-item */
+    display: flex;
+    justify-content: center; /* Центрируем cart-quantity-controls */
+    align-items: center;
+    gap: 10px;
+}
+
+.cart-quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 #pickup-form {
     display: flex;
     flex-direction: column;
@@ -677,6 +678,25 @@ admin-login:hover::before {
     background-color: #595656;
 }
 
+#order-comment {
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background-color: #333;
+    resize: vertical; /* Разрешаем изменять только высоту */
+    min-height: 100px;
+    font-family: inherit;
+    color: #ffffff;
+    margin-top: 10px;
+}
+
+.char-counter {
+    text-align: right;
+    font-size: 12px;
+    color: white;
+    margin-top: 5px;
+}
+
 #close-cart {
     margin-top: 10px;
     padding: 10px 20px;
@@ -694,7 +714,7 @@ admin-login:hover::before {
 /* Стили для поля ввода количества */
 .quantity-input, .cart-quantity {
     padding: 5px;
-    border: 1px solid #333;
+    border: none;
     border-radius: 5px;
     background-color: #333;
     color: #ffffff;
@@ -705,6 +725,66 @@ admin-login:hover::before {
 .cart-quantity {
     margin-left: 10px;
 }
+
+/* Стили для уменьшенных круглых кнопок + и - */
+.quantity-btn {
+    width: 22px; /* Уменьшаем размер */
+    height: 22px; /* Уменьшаем размер */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #333;
+    color: white;
+    border-radius: 50%;
+    font-size: 14px; /* Уменьшаем размер шрифта */
+    user-select: none;
+    transition: background-color 0.3s ease;
+    position: relative;
+    line-height: 1;
+    padding: 0;
+    font-family: Helvetica;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+    .quantity-btn:hover {
+        background-color: #555;
+    }
+
+    /* Стили для минуса через псевдоэлемент */
+    .quantity-btn.decrease::after {
+        content: "-";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, calc(-50% - 1px)); /* Корректируем сдвиг для нового размера */
+    }
+
+/* Контейнер для элементов управления количеством */
+.quantity-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 10px 0;
+    justify-content: center;
+}
+
+/* Стили для кнопки добавления в корзину */
+.add-to-cart-btn {
+    padding: 10px 20px;
+    background-color: #61686f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+    .add-to-cart-btn.in-cart {
+        background-color: #2196F3; /* синий */
+        box-shadow: 0 0 5px rgba(33, 150, 243, 0.8);
+    }
 
 #submit-button {
     position: relative; /* Для позиционирования спиннера */
