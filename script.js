@@ -18,7 +18,7 @@ function showAgeVerification() {
     });
 
     document.getElementById("age-no").addEventListener("click", () => {
-        alert("Доступ запрещён.");
+        showToast("Доступ запрещён.");
         window.location.href = "https://ya.ru/"; // Закрываем сайт
     });
 }
@@ -105,12 +105,12 @@ document.getElementById("product-form").addEventListener("submit", async (e) => 
             ...products[category][existingProductIndex],
             ...updatedProduct,
         };
-        alert("Обновление товара!");
+        showToast("Обновление товара!");
     } else {
         // Если это новый товар, добавляем его
         const newProduct = { id: Number(id), name, brand, line, description, price, image, stock, category };
         products[category].push(newProduct);
-        alert("Новый товар!");
+        showToast("Новый товар!");
     }
 
     renderSubCategories("product-sub-categories", category);
@@ -260,7 +260,7 @@ function duplicateProduct(category, id) {
         // Прокручиваем страницу к форме
         window.scrollTo({ top: 0, behavior: "smooth" });
 
-        alert("Товар успешно дублирован. Заполните форму и сохраните новый товар.");
+        showToast("Товар успешно дублирован. Заполните форму и сохраните новый товар.");
     }
 }
 
@@ -269,7 +269,7 @@ function handleOutOfStock(category, id) {
     const product = products[category].find(p => p.id === id); // Находим товар по ID
     if (product) {
         product.stock = 0; // Устанавливаем количество товара на 0
-        alert(`Товар "${product.name}" теперь отсутствует на складе.`);
+        showToast(`Товар "${product.name}" теперь отсутствует на складе.`);
         renderProducts(category); // Обновляем отображение товаров
         renderProductList(category);
         saveProducts(); // Сохраняем данные
@@ -654,7 +654,7 @@ function renderProducts(category, brand, line) {
                     addToCartButton.classList.add("in-cart");
                     addToCartButton.innerHTML = `В корзине ${updatedCartItem.quantity} шт.`;
                 } else {
-                    alert("Укажите корректное количество.");
+                    showToast("Укажите корректное количество.");
                 }
             });
             card.appendChild(addToCartButton);
@@ -691,7 +691,7 @@ function updateCartButtonState(productId) {
 //Добавление товара в корзину
 function addToCart(product, quantity) {
     if (quantity > product.stock) {
-        alert("Недостаточно товара на складе.");
+        showToast("Недостаточно товара на складе.");
         return;
     }
 
@@ -704,7 +704,7 @@ function addToCart(product, quantity) {
 
         // Проверяем, не превышает ли новое количество доступный запас
         if (newQuantity > product.stock) {
-            alert("Недостаточно товара на складе.");
+            showToast("Недостаточно товара на складе.");
             return;
         }
 
@@ -836,7 +836,7 @@ function renderCartItems() {
                 renderCartItems();
                 renderProducts(currentCategory, currentBrand);
             } else {
-                alert("Недостаточно товара на складе");
+                showToast("Недостаточно товара на складе");
             }
         });
     });
@@ -854,7 +854,7 @@ function renderCartItems() {
                 renderCartItems();
                 renderProducts(currentCategory, currentBrand);
             } else {
-                alert("Недостаточно товара на складе.");
+                showToast("Недостаточно товара на складе.");
                 e.target.value = cart[index].quantity;
             }
         });
@@ -1024,7 +1024,7 @@ document.getElementById("pickup-form").addEventListener("submit", async (e) => {
 
     // Проверяем, не заблокирована ли кнопка
     if (submitButton.disabled) {
-        alert("Пожалуйста, подождите 3 секунды перед повторной отправкой.");
+        showToast("Пожалуйста, подождите 3 секунды перед повторной отправкой.");
         return;
     }
 
@@ -1032,7 +1032,7 @@ document.getElementById("pickup-form").addEventListener("submit", async (e) => {
     submitButton.appendChild(spinner); // Добавляем спиннер на кнопку
 
     if (cart.length === 0) {
-        alert("Ваша корзина пуста. Добавьте товары перед оформлением заказа.");
+        showToast("Ваша корзина пуста. Добавьте товары перед оформлением заказа.");
         submitButton.disabled = false; // Разблокируем кнопку
         spinner.remove(); // Убираем спиннер
         return; // Прерываем выполнение функции
@@ -1078,17 +1078,17 @@ document.getElementById("pickup-form").addEventListener("submit", async (e) => {
         });
 
         if (response.ok) {
-            alert(`Спасибо, ${name}! Ваш заказ оформлен. Мы свяжемся с вами по номеру ${phone}.`);
+            showToast(`Спасибо, ${name}! Ваш заказ оформлен. Мы свяжемся с вами по номеру ${phone}.`);
             cart = [];
             saveCart(); // Сохраняем корзину
             renderCartButton(); // Обновляем кнопку корзины
             document.getElementById("cart-modal").style.display = "none"; // Скрываем корзину
         } else {
-            alert("Ошибка при оформлении заказа. Попробуйте ещё раз.");
+            showToast("Ошибка при оформлении заказа. Попробуйте ещё раз.");
         }
     } catch (error) {
         console.error("Ошибка:", error);
-        alert("Произошла ошибка при отправке данных.");
+        showToast("Произошла ошибка при отправке данных.");
     } finally {
         // Устанавливаем задержку в 3 секунды перед разблокировкой кнопки
         setTimeout(() => {
@@ -1245,6 +1245,40 @@ async function loadProduct() {
         console.error('Ошибка:', error);
         throw error;
     }
+}
+
+function showToast(message) {
+    // Создаем блокирующий оверлей
+    const overlay = document.createElement('div');
+    overlay.className = 'toast-overlay';
+
+    // Ваш существующий код toast
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `
+        <span>${message}</span>
+        <button class="toast-close-btn">OK</button>
+    `;
+
+    // Добавляем элементы в DOM
+    document.body.appendChild(overlay);
+    overlay.appendChild(toast);
+
+    // Показываем с анимацией
+    setTimeout(() => {
+        overlay.classList.add('show');
+        toast.classList.add('show');
+    }, 10);
+
+    // Обработчик закрытия
+    toast.querySelector('.toast-close-btn').addEventListener('click', () => {
+        overlay.classList.remove('show');
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+            overlay.remove();
+        }, 300);
+    });
 }
 
 // Функция для создания звёзд фона сайта
@@ -1423,7 +1457,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // В случае ошибки показываем знак бесконечности и не открываем основной сайт
             progressElement.textContent = '∞';
             console.error('Ошибка при загрузке:', error);
-            alert('Ошибка загрузки данных с сервера. Пожалуйста, попробуйте позже.');
+            showToast('Ошибка загрузки данных с сервера. Пожалуйста, попробуйте позже.');
         }
     }, 1000); // Время загрузки в миллисекундах (3995 секунд)
 });
