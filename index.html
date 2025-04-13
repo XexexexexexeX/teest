@@ -55,7 +55,13 @@
                 <input type="text" id="product-line" placeholder="Линейка">
                 <input type="text" id="product-description" placeholder="Описание" required>
                 <input type="number" id="product-price" placeholder="Цена" required>
-                <input type="text" id="product-image" placeholder="Ссылка на изображение" required>
+                <div>
+                    <label for="product-image">Ссылка на изображение:</label>
+                    <input type="text" id="product-image" name="image">
+
+                    <label for="product-image-upload">Или загрузите изображение:</label>
+                    <input type="file" id="product-image-upload" accept="image/*">
+                </div>
                 <input type="number" id="product-stock" placeholder="Количество на складе" required>
                 <select id="product-category">
                     <option value="ecigs">Электронные сигареты</option>
