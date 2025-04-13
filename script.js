@@ -110,8 +110,10 @@ document.getElementById("product-form").addEventListener("submit", async (e) => 
         alert("Новый товар добавлен!");
     }
 
-    renderProductList();
-    renderProducts(category, brand);
+     renderSubCategories("product-sub-categories", category);
+     renderLines("product-lines", category, brand);
+     renderProducts(category, brand); // Обновляем отображение товаров
+     renderProductList(category, brand);
 
     // Умный сброс формы (без потери важных данных)
     const form = document.getElementById("product-form");
