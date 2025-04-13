@@ -71,55 +71,55 @@ let initialScrollPosition = window.scrollY; // Сохраняем изначал
 // Обработка формы с предварительным обновлением данных
 document.getElementById("product-form").addEventListener("submit", async (e) => {
     e.preventDefault();
-    await loadProducts(); // Обновляем данные перед выполнением действий
+    await loadProducts();
 
-    const id = document.getElementById("product-id").value || Date.now(); // Используем существующий ID или создаем новый
+    const id = document.getElementById("product-id").value || Date.now();
     const name = document.getElementById("product-name").value;
     const brand = document.getElementById("product-brand").value;
-    const line = document.getElementById("product-line").value; // Получаем значение линейки
+    const line = document.getElementById("product-line").value;
     const description = document.getElementById("product-description").value;
     const price = parseFloat(document.getElementById("product-price").value);
-    const image = document.getElementById("product-image").value;
+    let image = document.getElementById("product-image").value;
     const stock = parseInt(document.getElementById("product-stock").value);
     const category = document.getElementById("product-category").value;
 
-    if (!products[category]) {
-        products[category] = []; // Создаём новую категорию, если её нет
+    // Загрузка нового изображения (если есть)
+    const fileInput = document.getElementById("product-image-upload");
+    if (fileInput.files.length > 0) {
+        try {
+            image = await uploadImage(fileInput.files[0]);
+            document.getElementById("product-image").value = image;
+        } catch (error) {
+            console.error("Ошибка загрузки:", error);
+            alert("Ошибка загрузки изображения, используется старая ссылка");
+        }
     }
 
+    // Обновление или добавление товара
     const updatedProduct = {
-        ...(name && { name }),
-        ...(brand && { brand }),
-        ...(line && { line }), // Добавляем линейку
-        ...(description && { description }),
-        ...(!isNaN(price) && { price }),
-        ...(image && { image }),
-        ...(!isNaN(stock) && { stock }),
+        name, brand, line, description, price, image, stock, category
     };
 
     const existingProductIndex = products[category].findIndex(p => p.id === Number(id));
 
     if (existingProductIndex !== -1) {
-        // Если товар существует, обновляем его
-        products[category][existingProductIndex] = {
-            ...products[category][existingProductIndex],
-            ...updatedProduct,
-        };
-        showToast("Обновление товара!");
+        products[category][existingProductIndex] = { ...products[category][existingProductIndex], ...updatedProduct };
+        alert("Товар обновлён!");
     } else {
-        // Если это новый товар, добавляем его
-        const newProduct = { id: Number(id), name, brand, line, description, price, image, stock, category };
-        products[category].push(newProduct);
-        showToast("Новый товар!");
+        products[category].push({ id: Number(id), ...updatedProduct });
+        alert("Новый товар добавлен!");
     }
 
-    renderSubCategories("product-sub-categories", category);
-    renderLines("product-lines", category, brand);
+    renderProductList();
+    renderProducts(category, brand);
 
-    renderProducts(category, brand); // Обновляем отображение товаров
-    renderProductList(category, brand);
-    document.getElementById("product-form").reset(); // Очищаем форму
-    saveProducts(); // Сохраняем данные
+    // Умный сброс формы (без потери важных данных)
+    const form = document.getElementById("product-form");
+    form.reset();
+    // После загрузки:
+    document.getElementById("product-category").value = category; // Сохраняем категорию
+
+    saveProducts();
 });
 
 // Обработчик для кнопки "Добавить/Изменить товар"
