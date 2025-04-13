@@ -44,6 +44,28 @@ function toggleProductList() {
 // Добавьте обработчик события для кнопки
 document.getElementById("toggle-product-list").addEventListener("click", toggleProductList);
 
+// Функция для загрузки изображения на сервер
+async function uploadImage(file) {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await fetch('https://tabachoook.ru/api/upload-image', {
+        method: 'POST',
+        body: formData,
+        priority: 'high', // Повышаем приоритет
+        headers: {
+            'Accept': 'application/json'
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result.imageUrl;
+}
+
 let initialScrollPosition = window.scrollY; // Сохраняем изначальное положение прокрутки
 
 // Обработка формы с предварительным обновлением данных
