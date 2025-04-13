@@ -1096,3 +1096,66 @@ admin-login:hover::before {
         animation: none;
     }
 }
+
+/* Блокирующий оверлей */
+.toast-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1001;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+    .toast-overlay.show {
+        opacity: 1;
+    }
+
+    /* Модифицируем позиционирование toast */
+    .toast-overlay .toast {
+        position: static;
+        margin: 0;
+        transform: translateY(20px);
+    }
+
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1002;
+}
+
+.toast {
+    background: #121212;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    border: 1px solid #5b5656;
+    margin-top: 10px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+    .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+.toast-close-btn {
+    background: transparent;
+    color: white;
+    border-radius: 4px;
+    padding: 2px 10px;
+    cursor: pointer;
+    margin-left: 10px;
+}
